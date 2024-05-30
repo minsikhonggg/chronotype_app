@@ -19,6 +19,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const HomePage(),
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/chronotypeSurvey': (context) => const ChronotypeSurveyPage(),
+        '/sleepDiary': (context) => const SleepDiaryPage(),
+        '/sleepAnalysis': (context) => const SleepAnalysisPage(),
+      },
     );
   }
 }
