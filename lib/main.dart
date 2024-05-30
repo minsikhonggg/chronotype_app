@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
-import 'chronotype_survey_page.dart';
-import 'sleep_diary_page.dart';
-import 'sleep_analysis_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'login_screen.dart';
+import 'chronotype_survey_screen.dart';
+import 'sleep_diary_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,43 +18,39 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      initialRoute: '/',
       routes: {
-        '/login': (context) => const LoginPage(),
-        '/chronotypeSurvey': (context) => const ChronotypeSurveyPage(),
-        '/sleepDiary': (context) => const SleepDiaryPage(),
-        '/sleepAnalysis': (context) => const SleepAnalysisPage(),
+        '/': (context) => LoginScreen(),
+        '/home': (context) => HomeScreen(),
+        '/survey': (context) => ChronotypeSurveyScreen(),
+        '/diary': (context) => SleepDiaryScreen(),
       },
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chronotype App')),
+      appBar: AppBar(
+        title: Text('Home'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/login'),
-              child: const Text('Login'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/survey');
+              },
+              child: Text('Take Chronotype Survey'),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/chronotypeSurvey'),
-              child: const Text('Chronotype Survey'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/sleepDiary'),
-              child: const Text('Sleep Diary'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/sleepAnalysis'),
-              child: const Text('Sleep Analysis'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/diary');
+              },
+              child: Text('Fill Sleep Diary'),
             ),
           ],
         ),
