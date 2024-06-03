@@ -1,79 +1,34 @@
 import 'package:flutter/material.dart';
+import 'services/data_service.dart';
 
-class ChronotypeSurveyScreen extends StatefulWidget {
-  @override
-  _ChronotypeSurveyScreenState createState() => _ChronotypeSurveyScreenState();
-}
-
-class _ChronotypeSurveyScreenState extends State<ChronotypeSurveyScreen> {
-  final List<String> questions = [
-    'Question 1',
-    'Question 2',
-    // Add all 19 questions here
+class ChronotypeSurveyScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> _questions = [
+    {'question': 'What time do you usually wake up?', 'options': ['5-6 AM', '6-7 AM', '7-8 AM', '8-9 AM', 'After 9 AM']},
+    // 추가 질문을 여기에 추가하세요
   ];
-
-  final Map<int, int> answers = {};
-
-  void _submitSurvey() {
-    int totalScore = answers.values.reduce((a, b) => a + b);
-    String chronotype = _determineChronotype(totalScore);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ResultScreen(chronotype: chronotype),
-      ),
-    );
-  }
-
-  String _determineChronotype(int score) {
-    if (score <= 19) return 'Definitely Evening Type';
-    if (score <= 39) return 'Moderate Evening Type';
-    if (score <= 59) return 'Intermediate Type';
-    if (score <= 79) return 'Moderate Morning Type';
-    return 'Definitely Morning Type';
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Chronotype Survey')),
       body: ListView.builder(
-        itemCount: questions.length,
+        itemCount: _questions.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(questions[index]),
-            trailing: DropdownButton<int>(
-              value: answers[index],
-              items: List.generate(5, (i) => i + 1)
-                  .map((e) => DropdownMenuItem(value: e, child: Text('$e')))
-                  .toList(),
-              onChanged: (value) {
-                setState(() {
-                  answers[index] = value!;
-                });
+            title: Text(_questions[index]['question']),
+            trailing: DropdownButton<String>(
+              items: _questions[index]['options'].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                DataService.saveSurveyAnswer(index, newValue!);
               },
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _submitSurvey,
-        child: Icon(Icons.check),
-      ),
-    );
-  }
-}
-
-class ResultScreen extends StatelessWidget {
-  final String chronotype;
-
-  ResultScreen({required this.chronotype});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Your Chronotype')),
-      body: Center(
-        child: Text('Your chronotype is $chronotype'),
       ),
     );
   }

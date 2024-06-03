@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'signup_screen.dart';
 import 'services/data_service.dart';
-import 'profile_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class SignUpScreen extends StatelessWidget {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('로그인'),
+        title: Text('회원가입'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -19,53 +19,62 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Sign In',
+              'Sign Up',
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Full name',
+              ),
+            ),
+            TextField(
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
-                hintText: 'Enter your Email',
               ),
             ),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
-                hintText: 'Enter your password',
+                suffixIcon: Icon(Icons.visibility_off),
+              ),
+              obscureText: true,
+            ),
+            TextField(
+              controller: _confirmPasswordController,
+              decoration: InputDecoration(
+                labelText: 'Confirm your password',
+                suffixIcon: Icon(Icons.visibility_off),
               ),
               obscureText: true,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final user = await DataService.getUser(
-                  _emailController.text,
-                  _passwordController.text,
-                );
-                if (user != null) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen(userId: user['id'].toString())),
+                if (_passwordController.text == _confirmPasswordController.text) {
+                  await DataService.saveUser(
+                    _nameController.text,
+                    _emailController.text,
+                    _passwordController.text,
                   );
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign Up Successful')));
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Failed')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Passwords do not match')));
                 }
               },
-              child: Text('LOGIN'),
+              child: Text('SIGN UP'),
             ),
             SizedBox(height: 20),
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpScreen()),
-                );
+                Navigator.pop(context);
               },
               child: Text(
-                "Don't have an account? Sign up",
+                'Already have an account? Login',
                 style: TextStyle(color: Colors.orange),
               ),
             ),

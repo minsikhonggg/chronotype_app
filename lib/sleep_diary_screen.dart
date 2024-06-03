@@ -1,44 +1,46 @@
 import 'package:flutter/material.dart';
 
-class SleepDiaryScreen extends StatefulWidget {
-  @override
-  _SleepDiaryScreenState createState() => _SleepDiaryScreenState();
-}
+class SleepDiaryScreen extends StatelessWidget {
+  final DateTime selectedDate;
 
-class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
-  final List<String> questions = [
-    'What time did you go to bed?',
-    'How long did it take you to fall asleep?',
-    // Add all 11 questions here
-  ];
+  SleepDiaryScreen({required this.selectedDate});
 
-  final Map<int, String> answers = {};
-
-  void _submitDiary() {
-    // Save the answers to a database or process them as needed
-    Navigator.of(context).pop();
-  }
+  final TextEditingController _diaryController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sleep Diary')),
-      body: ListView.builder(
-        itemCount: questions.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(questions[index]),
-            trailing: TextField(
-              onChanged: (value) {
-                answers[index] = value;
-              },
-            ),
-          );
-        },
+      appBar: AppBar(
+        title: Text('Sleep Diary'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _submitDiary,
-        child: Icon(Icons.check),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Date: ${selectedDate.toLocal()}'.split(' ')[0],
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _diaryController,
+              maxLines: 10,
+              decoration: InputDecoration(
+                hintText: 'Enter your sleep diary here...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // 일기 저장 로직 추가
+                Navigator.pop(context, _diaryController.text);
+              },
+              child: Text('Save Diary Entry'),
+            ),
+          ],
+        ),
       ),
     );
   }
