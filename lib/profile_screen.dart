@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'chronotype_survey_screen.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'chronotype_survey_intro_screen.dart';
 import 'sleep_diary_screen.dart';
 import 'sleep_analysis_screen.dart';
 import 'profile_edit_screen.dart';
@@ -46,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         slivers: [
           SliverAppBar(
             expandedHeight: 200.0,
+            automaticallyImplyLeading: false, // 뒤로 가기 버튼 제거
             flexibleSpace: FlexibleSpaceBar(
               title: Text('프로필'),
               background: Image.asset('assets/profile_background.jpeg', fit: BoxFit.cover),
@@ -57,6 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
                         radius: 50,
@@ -84,12 +87,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () async {
                           final result = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => ChronotypeSurveyScreen()),
+                            MaterialPageRoute(builder: (context) => ChronotypeSurveyIntroScreen()),
                           );
-                          setState(() {
-                            chronotypeResult = result;
-                          });
+                          if (result != null) {
+                            setState(() {
+                              chronotypeResult = result;
+                            });
+                          }
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[100], // primary 대신 backgroundColor 사용
+                          foregroundColor: Colors.black, // onPrimary 대신 foregroundColor 사용
+                        ),
                         child: Text('크로노 타입 체크 하기'),
                       ),
                       SizedBox(height: 20),
@@ -98,7 +107,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 20),
-                      ElevatedButton(
+                      TableCalendar(
+                        firstDay: DateTime.utc(2010, 10, 16),
+                        lastDay: DateTime.utc(2030, 3, 14),
+                        focusedDay: DateTime.now(),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton.icon(
                         onPressed: () async {
                           DateTime? selectedDate = await showDatePicker(
                             context: context,
@@ -124,17 +139,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             });
                           }
                         },
-                        child: Text('날짜 선택하여 수면 일기 작성'),
+                        icon: Icon(Icons.add),
+                        label: Text('수면 일기 추가'),
                       ),
                       SizedBox(height: 20),
-                      ElevatedButton(
+                      ElevatedButton.icon(
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => SleepAnalysisScreen()),
                           );
                         },
-                        child: Text('수면 일기 분석'),
+                        icon: Icon(Icons.bar_chart),
+                        label: Text('수면 일기 분석'),
                       ),
                     ],
                   ),

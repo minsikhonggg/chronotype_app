@@ -57,6 +57,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('프로필 수정'),
+        automaticallyImplyLeading: false, // 뒤로 가기 버튼 제거
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
