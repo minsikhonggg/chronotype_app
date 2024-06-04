@@ -9,9 +9,27 @@ class DataService {
 
     _database = await openDatabase(
       join(await getDatabasesPath(), 'user_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          "CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT, phone TEXT, imagePath TEXT)",
+      onCreate: (db, version) async {
+        await db.execute(
+            '''
+          CREATE TABLE users(
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            name TEXT, 
+            email TEXT, 
+            password TEXT, 
+            phone TEXT, 
+            imagePath TEXT
+          )
+          '''
+        );
+        await db.execute(
+            '''
+          CREATE TABLE sleep_diary(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT,
+            diary TEXT
+          )
+          '''
         );
       },
       version: 1,
@@ -67,11 +85,51 @@ class DataService {
     );
   }
 
-  static Future<void> saveSurveyAnswer(int index, String answer) async {
-    // 설문 답변 저장 로직 추가
-    print('Saved answer for question $index: $answer');
+  static Future<void> saveSleepDiary(DateTime date, String diary) async {
+    final db = _database!;
+    await db.insert(
+      'sleep_diary',
+      {'date': date.toIso8601String(), 'diary': diary},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
+  static Future<List<Map<String, dynamic>>> getSleepDiaries() async {
+    final db = _database!;
+    return await db.query('sleep_diary');
+  }
 
+  static Future<Map<String, dynamic>?> getDiaryByDate(DateTime date) async {
+    final db = _database!;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'sleep_diary',
+      where: "date = ?",
+      whereArgs: [date.toIso8601String()],
+    );
 
+    if (maps.isNotEmpty) {
+      return maps.first;
+    } else {
+      return null;
+    }
+  }
+
+  static Future<void> updateSleepDiary(DateTime date, String diary) async {
+    final db = _database!;
+    await db.update(
+      'sleep_diary',
+      {'diary': diary},
+      where: "date = ?",
+      whereArgs: [date.toIso8601String()],
+    );
+  }
+
+  static Future<void> deleteSleepDiary(DateTime date) async {
+    final db = _database!;
+    await db.delete(
+      'sleep_diary',
+      where: "date = ?",
+      whereArgs: [date.toIso8601String()],
+    );
+  }
 }
