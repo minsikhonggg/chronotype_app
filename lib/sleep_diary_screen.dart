@@ -11,12 +11,12 @@ class SleepDiaryScreen extends StatefulWidget {
 }
 
 class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
-  TimeOfDay _time1 = TimeOfDay(hour: 7, minute: 0);
-  TimeOfDay _time2 = TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time1 = TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _time2 = TimeOfDay(hour: 0, minute: 0);
   TimeOfDay _time3 = TimeOfDay(hour: 0, minute: 0);
   TimeOfDay _time5 = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _time6 = TimeOfDay(hour: 7, minute: 0);
-  TimeOfDay _time7 = TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time6 = TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _time7 = TimeOfDay(hour: 0, minute: 0);
   final TextEditingController _controller4 = TextEditingController();
   final TextEditingController _controller9 = TextEditingController();
   final TextEditingController _controller10 = TextEditingController();

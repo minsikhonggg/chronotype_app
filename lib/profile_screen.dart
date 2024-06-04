@@ -107,6 +107,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadSleepDiaries();
   }
 
+  void _showHelp(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('도움말'),
+          content: Text('달력의 날짜를 클릭하여 수면 일기를 추가하거나 수정할 수 있습니다. 빨간 점이 있는 날짜는 수면 일기가 작성된 날짜입니다.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ImageProvider<Object> profileImage = profileImagePath.startsWith('assets')
@@ -177,56 +197,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         chronotypeResult ?? '설문 조사 결과가 없습니다.',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 20),
-                      TableCalendar(
-                        firstDay: DateTime.utc(2010, 10, 16),
-                        lastDay: DateTime.utc(2030, 3, 14),
-                        focusedDay: DateTime.now(),
-                        calendarFormat: CalendarFormat.month, // 기본 달력 형식 설정
-                        availableCalendarFormats: const {CalendarFormat.month: 'Month'}, // 달력 형식 선택 버튼 제거
-                        calendarBuilders: CalendarBuilders(
-                          markerBuilder: (context, date, events) {
-                            if (sleepDiary.containsKey(date)) {
-                              return Positioned(
-                                bottom: 1,
-                                child: Container(
-                                  width: 7,
-                                  height: 7,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              );
-                            }
-                            return null;
-                          },
-                        ),
-                        calendarStyle: CalendarStyle(
-                          todayDecoration: BoxDecoration(
-                            color: Colors.orange,
-                            shape: BoxShape.circle,
+                      Stack(
+                        children: [
+                          TableCalendar(
+                            firstDay: DateTime.utc(2010, 10, 16),
+                            lastDay: DateTime.utc(2030, 3, 14),
+                            focusedDay: DateTime.now(),
+                            calendarFormat: CalendarFormat.month, // 기본 달력 형식 설정
+                            availableCalendarFormats: const {CalendarFormat.month: 'Month'}, // 달력 형식 선택 버튼 제거
+                            calendarBuilders: CalendarBuilders(
+                              markerBuilder: (context, date, events) {
+                                if (sleepDiary.containsKey(date)) {
+                                  return Positioned(
+                                    bottom: 1,
+                                    child: Container(
+                                      width: 7,
+                                      height: 7,
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return null;
+                              },
+                            ),
+                            calendarStyle: CalendarStyle(
+                              todayDecoration: BoxDecoration(
+                                color: Colors.orange,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            onDaySelected: (selectedDay, focusedDay) {
+                              _showSleepDiaryDialog(selectedDay);
+                            },
                           ),
-                        ),
-                        onDaySelected: (selectedDay, focusedDay) {
-                          _showSleepDiaryDialog(selectedDay);
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          DateTime? selectedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (selectedDate != null) {
-                            _navigateToSleepDiaryScreen(selectedDate);
-                          }
-                        },
-                        icon: Icon(Icons.add),
-                        label: Text('수면 일기 추가'),
+                          Positioned(
+                            top: 20,
+                            left: 200,
+                            child: GestureDetector(
+                              onTap: () => _showHelp(context),
+                              child: Container(
+                                padding: EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey,
+                                ),
+                                child: Icon(
+                                  Icons.help,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 20),
                       ElevatedButton.icon(
