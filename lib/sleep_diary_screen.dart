@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'services/data_service.dart';
 
 class SleepDiaryScreen extends StatefulWidget {
   final DateTime selectedDate;
@@ -22,6 +23,21 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
   final TextEditingController _controller11 = TextEditingController();
 
   List<bool> _qualityRatings = List.filled(5, false);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingDiary();
+  }
+
+  Future<void> _loadExistingDiary() async {
+    final existingDiary = await DataService.getDiaryByDate(widget.selectedDate);
+    if (existingDiary != null) {
+      final diary = existingDiary['diary'];
+      // Parse the diary string to update the form fields
+      // Update _time1, _time2, ..., _controller4.text, ..., _qualityRatings based on the diary string
+    }
+  }
 
   @override
   void dispose() {
@@ -72,6 +88,30 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     }
   }
 
+  void _saveDiary() async {
+    String diary = '''
+1. 몇 시에 잠자리에 들었습니까?: ${_time1.format(context)}
+2. 잠을 자려고 시도한 것은 몇 시부터 입니까?: ${_time2.format(context)}
+3. 잠드는 데 시간이 얼마나 걸렸습니까?: ${_time3.hour}시간 ${_time3.minute}분
+4. 최종적으로 깨기 전 중간에 몇 번이나 깼습니까?: ${_controller4.text}
+5. 중간에 깨어 있던 시간을 모두 합치면 얼마나 됩니까?: ${_time5.hour}시간 ${_time5.minute}분
+6. 마지막으로 깬 시간은 몇 시입니까?: ${_time6.format(context)}
+7. 마지막으로 깬 후에 침대에서 나온 시간은 몇 시입니까?: ${_time7.format(context)}
+8. 자신의 수면의 질을 평가하면?: ${_qualityRatings.indexOf(true) + 1}
+9. 꿈을 꾸었습니까? 꾸었다면 어떤 내용이었습니까?: ${_controller9.text}
+10. 수면과 관련해서 달리 관찰된 내용이 있다면 적어주세요.: ${_controller10.text}
+11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요.: ${_controller11.text}
+''';
+
+    final existingDiary = await DataService.getDiaryByDate(widget.selectedDate);
+    if (existingDiary != null) {
+      await DataService.updateSleepDiary(widget.selectedDate, diary);
+    } else {
+      await DataService.saveSleepDiary(widget.selectedDate, diary);
+    }
+    Navigator.pop(context, widget.selectedDate); // 프로필 화면으로 이동하며 선택한 날짜 반환
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,9 +135,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
             _buildTextInputBox('11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요.', _controller11),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // 저장 기능 추가
-              },
+              onPressed: _saveDiary,
               child: Text('저장'),
             ),
           ],
@@ -255,5 +293,3 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     );
   }
 }
-
-void main() => runApp(MaterialApp(home: SleepDiaryScreen(selectedDate: DateTime.now())));

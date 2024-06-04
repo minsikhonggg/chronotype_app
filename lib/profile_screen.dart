@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 import 'chronotype_survey_intro_screen.dart';
 import 'sleep_diary_screen.dart';
 import 'sleep_analysis_screen.dart';
@@ -18,13 +19,14 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? chronotypeResult;
-  Map<DateTime, List<String>> sleepDiary = {};
+  Map<DateTime, String> sleepDiary = {};
   String profileImagePath = 'assets/default_profile.png'; // 기본 이미지 경로
 
   @override
   void initState() {
     super.initState();
     _loadUserProfile();
+    _loadSleepDiaries();
   }
 
   Future<void> _loadUserProfile() async {
@@ -34,6 +36,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
         profileImagePath = user['imagePath'];
       });
     }
+  }
+
+  Future<void> _loadSleepDiaries() async {
+    List<Map<String, dynamic>> diaries = await DataService.getSleepDiaries();
+    setState(() {
+      sleepDiary = {
+        for (var diary in diaries) DateTime.parse(diary['date']): diary['diary']
+      };
+    });
+  }
+
+  Future<void> _showSleepDiaryDialog(DateTime selectedDate) async {
+    final diaryEntry = await DataService.getDiaryByDate(selectedDate);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
+          content: diaryEntry != null
+              ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(diaryEntry['diary']),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _navigateToSleepDiaryScreen(selectedDate);
+                },
+                child: Text('수정하기'),
+              ),
+            ],
+          )
+              : Text('작성된 수면 일기가 없습니다.'),
+          actions: [
+            if (diaryEntry == null)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _navigateToSleepDiaryScreen(selectedDate);
+                },
+                child: Text('추가하기'),
+              ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('닫기'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _navigateToSleepDiaryScreen(DateTime selectedDate) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SleepDiaryScreen(selectedDate: selectedDate),
+      ),
+    );
+    _loadSleepDiaries(); // 업데이트된 일기 데이터를 다시 로드합니다.
+  }
+
+  void _refreshCalendar() {
+    _loadSleepDiaries();
   }
 
   @override
@@ -111,6 +182,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 3, 14),
                         focusedDay: DateTime.now(),
+                        calendarFormat: CalendarFormat.month, // 기본 달력 형식 설정
+                        availableCalendarFormats: const {CalendarFormat.month: 'Month'}, // 달력 형식 선택 버튼 제거
+                        calendarBuilders: CalendarBuilders(
+                          markerBuilder: (context, date, events) {
+                            if (sleepDiary.containsKey(date)) {
+                              return Positioned(
+                                bottom: 1,
+                                child: Container(
+                                  width: 7,
+                                  height: 7,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              );
+                            }
+                            return null;
+                          },
+                        ),
+                        calendarStyle: CalendarStyle(
+                          todayDecoration: BoxDecoration(
+                            color: Colors.orange,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        onDaySelected: (selectedDay, focusedDay) {
+                          _showSleepDiaryDialog(selectedDay);
+                        },
                       ),
                       SizedBox(height: 20),
                       ElevatedButton.icon(
@@ -122,21 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             lastDate: DateTime(2100),
                           );
                           if (selectedDate != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SleepDiaryScreen(selectedDate: selectedDate),
-                              ),
-                            ).then((entry) {
-                              if (entry != null) {
-                                setState(() {
-                                  if (sleepDiary[selectedDate] == null) {
-                                    sleepDiary[selectedDate] = [];
-                                  }
-                                  sleepDiary[selectedDate]!.add(entry);
-                                });
-                              }
-                            });
+                            _navigateToSleepDiaryScreen(selectedDate);
                           }
                         },
                         icon: Icon(Icons.add),
@@ -147,11 +233,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SleepAnalysisScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => SleepAnalysisScreen(onDiaryDeleted: _refreshCalendar),
+                            ),
                           );
                         },
                         icon: Icon(Icons.bar_chart),
-                        label: Text('수면 일기 분석'),
+                        label: Text('수면 일기 목록'),
                       ),
                     ],
                   ),
