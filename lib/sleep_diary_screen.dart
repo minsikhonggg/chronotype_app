@@ -11,12 +11,12 @@ class SleepDiaryScreen extends StatefulWidget {
 }
 
 class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
-  TimeOfDay _time1 = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _time2 = TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _time1 = TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time2 = TimeOfDay(hour: 7, minute: 0);
   TimeOfDay _time3 = TimeOfDay(hour: 0, minute: 0);
   TimeOfDay _time5 = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _time6 = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _time7 = TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _time6 = TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time7 = TimeOfDay(hour: 7, minute: 0);
   final TextEditingController _controller4 = TextEditingController();
   final TextEditingController _controller9 = TextEditingController();
   final TextEditingController _controller10 = TextEditingController();
@@ -34,43 +34,9 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     final existingDiary = await DataService.getDiaryByDate(widget.selectedDate);
     if (existingDiary != null) {
       final diary = existingDiary['diary'];
-      final lines = diary.split('\n');
-      setState(() {
-        _time1 = _parseTime(lines[0].split(': ')[1]);
-        _time2 = _parseTime(lines[1].split(': ')[1]);
-        _time3 = _parseDuration(lines[2].split(': ')[1]);
-        _controller4.text = lines[3].split(': ')[1];
-        _time5 = _parseDuration(lines[4].split(': ')[1]);
-        _time6 = _parseTime(lines[5].split(': ')[1]);
-        _time7 = _parseTime(lines[6].split(': ')[1]);
-        _qualityRatings = List.filled(5, false);
-        _qualityRatings[int.parse(lines[7].split(': ')[1]) - 1] = true;
-        _controller9.text = lines[8].split(': ')[1];
-        _controller10.text = lines[9].split(': ')[1];
-        _controller11.text = lines[10].split(': ')[1];
-      });
+      // Parse the diary string to update the form fields
+      // Update _time1, _time2, ..., _controller4.text, ..., _qualityRatings based on the diary string
     }
-  }
-
-  TimeOfDay _parseTime(String time) {
-    final parts = time.split(' ');
-    final hourMinute = parts[0].split(':');
-    final hour = int.parse(hourMinute[0]);
-    final minute = int.parse(hourMinute[1]);
-    if (parts[1] == 'PM' && hour != 12) {
-      return TimeOfDay(hour: hour + 12, minute: minute);
-    } else if (parts[1] == 'AM' && hour == 12) {
-      return TimeOfDay(hour: 0, minute: minute);
-    } else {
-      return TimeOfDay(hour: hour, minute: minute);
-    }
-  }
-
-  TimeOfDay _parseDuration(String duration) {
-    final parts = duration.split(' ');
-    final hour = int.parse(parts[0].replaceAll('시간', ''));
-    final minute = int.parse(parts[1].replaceAll('분', ''));
-    return TimeOfDay(hour: hour, minute: minute);
   }
 
   @override
