@@ -62,6 +62,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _showDeleteConfirmationDialog(DateTime selectedDate) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('삭제 확인'),
+          content: Text('정말 삭제 하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('돌아가기'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await DataService.deleteSleepDiary(selectedDate, widget.email);
+                Navigator.pop(context); // 닫기 확인 다이얼로그
+                Navigator.pop(context); // 닫기 수면 일기 다이얼로그
+                _showDeletionSuccessDialog();
+                _loadSleepDiaries(); // 삭제 후 일기 데이터를 다시 로드합니다.
+              },
+              child: Text('삭제'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red[200], // 연한 빨간색
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDeletionSuccessDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('삭제 완료'),
+          content: Text('수면 일기가 삭제되었습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // 닫기 삭제 완료 다이얼로그
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _showSleepDiaryDialog(DateTime selectedDate) async {
     final diaryEntry = await DataService.getDiaryByDate(selectedDate, widget.email);
 
@@ -77,12 +131,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Text(diaryEntry['diary']),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _navigateToSleepDiaryScreen(selectedDate, diaryEntry['diary']);
-                },
-                child: Text('수정하기'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _navigateToSleepDiaryScreen(selectedDate, diaryEntry['diary']);
+                    },
+                    child: Text('수정하기'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _showDeleteConfirmationDialog(selectedDate);
+                    },
+                    child: Text('삭제하기'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[200], // 연한 빨간색
+                    ),
+                  ),
+                ],
               ),
             ],
           )
