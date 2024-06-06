@@ -153,6 +153,14 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     Navigator.pop(context, widget.selectedDate); // 프로필 화면으로 이동하며 선택한 날짜 반환
   }
 
+  Future<void> _deleteDiary() async {
+    await DataService.deleteSleepDiary(widget.selectedDate, widget.email);
+    Navigator.pop(context); // 닫기 다이얼로그
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,6 +187,8 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
               onPressed: _saveDiary,
               child: Text('저장'),
             ),
+            if (widget.existingDiary != null)
+              SizedBox(height: 10),
           ],
         ),
       ),
