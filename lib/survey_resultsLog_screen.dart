@@ -26,14 +26,18 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
     setState(() {
       _results = results;
     });
-    if (results.isEmpty) {
-      widget.onResultsDeleted(); // Notify parent if all results are deleted
-    }
   }
 
   Future<void> _deleteResult(int id) async {
     await DataService.deleteChronotypeResult(id);
     _loadResults(); // Refresh the list after deletion
+    widget.onResultsDeleted(); // Notify the profile screen to update
+  }
+
+  Future<void> _deleteAllResults() async {
+    await DataService.deleteAllChronotypeResults(widget.email);
+    _loadResults(); // Refresh the list after deletion
+    widget.onResultsDeleted(); // Notify the profile screen to update
   }
 
   Future<void> _showDeleteConfirmationDialog(int id) async {
@@ -54,6 +58,38 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
               onPressed: () async {
                 Navigator.pop(context); // Close confirmation dialog
                 await _deleteResult(id);
+                _showDeletionSuccessDialog();
+              },
+              child: Text('삭제'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red[200], // Light red color
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDeleteAllConfirmationDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('모두 삭제 확인'),
+          content: Text('정말 모든 설문 조사 결과를 삭제하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('돌아가기'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close confirmation dialog
+                await _deleteAllResults();
                 _showDeletionSuccessDialog();
               },
               child: Text('삭제'),
@@ -93,6 +129,14 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('설문 조사 결과 관리'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete_forever),
+            onPressed: () {
+              _showDeleteAllConfirmationDialog();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

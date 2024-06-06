@@ -59,6 +59,25 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
     widget.onDiaryDeleted(); // Notify the calendar to update
   }
 
+  Future<void> _deleteAllDiaries() async {
+    for (var month in _sleepDiariesByMonth.keys) {
+      await _deleteDiariesByMonth(month);
+    }
+    _loadSleepDiaries();
+    widget.onDiaryDeleted(); // Notify the calendar to update
+  }
+
+  Future<void> _deleteDiariesByMonth(String month) async {
+    final diariesInMonth = _sleepDiariesByMonth[month];
+    if (diariesInMonth != null) {
+      for (var diary in diariesInMonth) {
+        DateTime date = DateTime.parse(diary['date']);
+        await _deleteDiary(date);
+      }
+      _loadSleepDiaries(); // Reload the list after deletion
+    }
+  }
+
   String _formatDate(String date) {
     final DateTime parsedDate = DateTime.parse(date);
     return DateFormat('yyyy-MM-dd').format(parsedDate);
@@ -104,14 +123,12 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
                     child: Text('수정하기'),
                   ),
                   ElevatedButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await _showDeleteConfirmationDialog(selectedDate);
+                    onPressed: () {
+                      _showDeleteConfirmationDialog(selectedDate);
                     },
                     child: Text('삭제하기'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[200], // 연한 빨간색
-                      foregroundColor: Colors.white,
                     ),
                   ),
                 ],
@@ -158,11 +175,44 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
               onPressed: () async {
                 Navigator.pop(context); // 닫기 확인 다이얼로그
                 await _deleteDiary(date);
+                Navigator.pop(context); // 닫기 수면 일기 다이얼로그
                 _showDeletionSuccessDialog();
               },
               child: Text('삭제'),
               style: TextButton.styleFrom(
                 backgroundColor: Colors.red[200], // 연한 빨간색
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDeleteAllConfirmationDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('모두 삭제 확인'),
+          content: Text('정말 모든 수면 일기를 삭제하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('돌아가기'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close confirmation dialog
+                await _deleteAllDiaries();
+                _showDeletionSuccessDialog();
+              },
+              child: Text('삭제'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red[200], // Light red color
                 foregroundColor: Colors.white,
               ),
             ),
@@ -182,7 +232,7 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // 닫기 삭제 완료 다이얼로그
+                Navigator.pop(context); // Close success dialog
               },
               child: Text('확인'),
             ),
@@ -197,6 +247,14 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sleep Analysis'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete_forever),
+            onPressed: () {
+              _showDeleteAllConfirmationDialog();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

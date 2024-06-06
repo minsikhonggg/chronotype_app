@@ -194,6 +194,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _refreshCalendar() {
     _loadSleepDiaries();
+  }
+
+  void _refreshProfile() {
     _loadChronotypeResult();
   }
 
@@ -398,7 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             MaterialPageRoute(
                               builder: (context) => SurveyResultsScreen(
                                 email: widget.email,
-                                onResultsDeleted: _loadChronotypeResult,
+                                onResultsDeleted: _refreshProfile,
                               ),
                             ),
                           );

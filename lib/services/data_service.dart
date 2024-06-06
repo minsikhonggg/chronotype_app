@@ -151,6 +151,24 @@ class DataService {
     );
   }
 
+  static Future<void> deleteAllSleepDiaries(String email) async {
+    final db = _database!;
+    await db.delete(
+      'sleep_diary',
+      where: "email = ?",
+      whereArgs: [email],
+    );
+  }
+
+  static Future<void> deleteSleepDiariesByMonth(String email, String month) async {
+    final db = _database!;
+    await db.delete(
+      'sleep_diary',
+      where: "email = ? AND date LIKE ?",
+      whereArgs: [email, '$month%'],
+    );
+  }
+
   static Future<void> saveChronotypeResult(String email, String resultType, int score, String date) async {
     final db = _database!;
     await db.insert(
@@ -198,6 +216,15 @@ class DataService {
       'chronotype_results',
       where: "id = ?",
       whereArgs: [id],
+    );
+  }
+
+  static Future<void> deleteAllChronotypeResults(String email) async {
+    final db = _database!;
+    await db.delete(
+      'chronotype_results',
+      where: "email = ?",
+      whereArgs: [email],
     );
   }
 }
