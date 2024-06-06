@@ -5,6 +5,7 @@ import 'chronotype_survey_intro_screen.dart';
 import 'sleep_diary_screen.dart';
 import 'sleep_analysis_screen.dart';
 import 'profile_edit_screen.dart';
+import 'survey_resultsLog_screen.dart';
 import 'dart:io';
 import 'services/data_service.dart';
 
@@ -19,19 +20,17 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? chronotypeResult;
+  int? chronotypeScore;
+  DateTime? chronotypeDate;
   Map<DateTime, String> sleepDiary = {};
   String profileImagePath = 'assets/default_profile.png'; // 기본 이미지 경로
 
   @override
   void initState() {
     super.initState();
-    _initializeData();
-  }
-
-  Future<void> _initializeData() async {
-    await _loadUserProfile();
-    await _loadSleepDiaries();
-    await _loadChronotypeResult();
+    _loadUserProfile();
+    _loadSleepDiaries();
+    _loadChronotypeResult();
   }
 
   Future<void> _loadUserProfile() async {
@@ -53,10 +52,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadChronotypeResult() async {
-    final result = await DataService.getChronotypeResult(widget.email);
+    final result = await DataService.getLatestChronotypeResult(widget.email);
     if (result != null) {
       setState(() {
-        chronotypeResult = result;
+        chronotypeResult = result['resultType'];
+        chronotypeScore = result['score'];
+        chronotypeDate = DateTime.parse(result['date']);
       });
     }
   }
@@ -114,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context) => SleepDiaryScreen(selectedDate: selectedDate, email: widget.email),
       ),
     );
-    await _loadSleepDiaries(); // 업데이트된 일기 데이터를 다시 로드합니다.
+    _loadSleepDiaries(); // 업데이트된 일기 데이터를 다시 로드합니다.
   }
 
   void _refreshCalendar() {
@@ -192,13 +193,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () async {
                           final result = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => ChronotypeSurveyIntroScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => ChronotypeSurveyIntroScreen(email: widget.email), // 이메일 전달
+                            ),
                           );
                           if (result != null) {
                             setState(() {
-                              chronotypeResult = result;
+                              chronotypeResult = result['resultType'];
+                              chronotypeScore = result['score'];
+                              chronotypeDate = DateTime.parse(result['date']);
                             });
-                            await DataService.saveChronotypeResult(widget.email, result);
+                            await DataService.saveChronotypeResult(
+                              widget.email,
+                              result['resultType'],
+                              result['score'],
+                              result['date'],
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -208,10 +218,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Text('크로노 타입 체크 하기'),
                       ),
                       SizedBox(height: 20),
-                      Text(
-                        chronotypeResult ?? '설문 조사 결과가 없습니다.',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
+                      if (chronotypeResult != null)
+                        Column(
+                          children: [
+                            Text(
+                              '최근 설문 결과',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              '결과: $chronotypeResult',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              '점수: $chronotypeScore',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              '날짜: ${DateFormat('yyyy-MM-dd').format(chronotypeDate!)}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        )
+                      else
+                        Text(
+                          '설문 조사 결과가 없습니다.',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       Stack(
                         children: [
                           TableCalendar(
@@ -281,6 +314,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         icon: Icon(Icons.bar_chart),
                         label: Text('수면 일기 목록'),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SurveyResultsScreen(email: widget.email),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.list),
+                        label: Text('설문 조사 결과 관리'),
                       ),
                     ],
                   ),

@@ -18,8 +18,7 @@ class DataService {
             email TEXT UNIQUE, 
             password TEXT, 
             phone TEXT, 
-            imagePath TEXT,
-            chronotypeResult TEXT
+            imagePath TEXT
           )
           '''
         );
@@ -30,6 +29,18 @@ class DataService {
             date TEXT,
             diary TEXT,
             email TEXT,
+            FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE
+          )
+          '''
+        );
+        await db.execute(
+            '''
+          CREATE TABLE chronotype_results(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            resultType TEXT,
+            score INTEGER,
+            date TEXT,
             FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE
           )
           '''
@@ -140,29 +151,44 @@ class DataService {
     );
   }
 
-  static Future<void> saveChronotypeResult(String email, String chronotypeResult) async {
+  static Future<void> saveChronotypeResult(String email, String resultType, int score, String date) async {
     final db = _database!;
-    await db.update(
-      'users',
-      {'chronotypeResult': chronotypeResult},
-      where: "email = ?",
-      whereArgs: [email],
+    await db.insert(
+      'chronotype_results',
+      {
+        'email': email,
+        'resultType': resultType,
+        'score': score,
+        'date': date,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  static Future<String?> getChronotypeResult(String email) async {
+  static Future<Map<String, dynamic>?> getLatestChronotypeResult(String email) async {
     final db = _database!;
     final List<Map<String, dynamic>> maps = await db.query(
-      'users',
-      columns: ['chronotypeResult'],
+      'chronotype_results',
       where: "email = ?",
       whereArgs: [email],
+      orderBy: "date DESC",
+      limit: 1,
     );
 
-    if (maps.isNotEmpty && maps.first['chronotypeResult'] != null) {
-      return maps.first['chronotypeResult'] as String?;
+    if (maps.isNotEmpty) {
+      return maps.first;
     } else {
       return null;
     }
+  }
+
+  static Future<List<Map<String, dynamic>>> getChronotypeResults(String email) async {
+    final db = _database!;
+    return await db.query(
+      'chronotype_results',
+      where: "email = ?",
+      whereArgs: [email],
+      orderBy: "date DESC",
+    );
   }
 }

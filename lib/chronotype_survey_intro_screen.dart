@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'chronotype_survey_questions_screen.dart';
 
 class ChronotypeSurveyIntroScreen extends StatelessWidget {
+  final String email;
+
+  ChronotypeSurveyIntroScreen({required this.email});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,12 +43,10 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ChronotypeSurveyQuestionsScreen()),
-                      ).then((result) {
-                        if (result != null) {
-                          Navigator.pop(context, result);
-                        }
-                      });
+                        MaterialPageRoute(
+                          builder: (context) => ChronotypeSurveyQuestionsScreen(email: email),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,

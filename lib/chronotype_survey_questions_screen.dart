@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'chronotype_survey_result_screen.dart';
+import 'services/data_service.dart';
 
 class ChronotypeSurveyQuestionsScreen extends StatefulWidget {
+  final String email;
+
+  ChronotypeSurveyQuestionsScreen({required this.email});
+
   @override
   _ChronotypeSurveyQuestionsScreenState createState() => _ChronotypeSurveyQuestionsScreenState();
 }
@@ -212,7 +218,7 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
     }
   }
 
-  void _showResult() {
+  void _showResult() async {
     String resultType;
     if (_totalScore >= 16 && _totalScore <= 30) {
       resultType = '확실한 저녁형';
@@ -226,16 +232,25 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
       resultType = '확실한 아침형';
     }
 
+    final result = {
+      'resultType': resultType,
+      'score': _totalScore,
+      'date': DateTime.now().toIso8601String(),
+    };
+
+    await DataService.saveChronotypeResult(widget.email, resultType, _totalScore, result['date'] as String);
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChronotypeSurveyResultScreen(totalScore: _totalScore, resultType: resultType),
+        builder: (context) => ChronotypeSurveyResultScreen(
+          totalScore: _totalScore,
+          resultType: resultType,
+          date: result['date'] as String,
+          email: widget.email,
+        ),
       ),
-    ).then((result) {
-      if (result != null) {
-        Navigator.pop(context, result);
-      }
-    });
+    );
   }
 
   @override
@@ -297,84 +312,6 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class ChronotypeSurveyResultScreen extends StatelessWidget {
-  final int totalScore;
-  final String resultType;
-
-  ChronotypeSurveyResultScreen({required this.totalScore, required this.resultType});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('크로노타입 설문 결과'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '총 점수',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  '$totalScore점',
-                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.red),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  '16 ~ 30 점: 확실한 저녁형\n'
-                      '31 ~ 41 점: 온건한 저녁형\n'
-                      '42 ~ 58 점: 중간형\n'
-                      '59 ~ 69 점: 온건한 아침형\n'
-                      '70 ~ 86 점: 확실한 아침형',
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  '$resultType',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
-                ),
-                SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, resultType);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('결과 확인'),
-                      SizedBox(width: 10),
-                      Icon(Icons.arrow_forward),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
