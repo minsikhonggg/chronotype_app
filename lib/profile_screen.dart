@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  _navigateToSleepDiaryScreen(selectedDate);
+                  _navigateToSleepDiaryScreen(selectedDate, diaryEntry['diary']);
                 },
                 child: Text('수정하기'),
               ),
@@ -92,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  _navigateToSleepDiaryScreen(selectedDate);
+                  _navigateToSleepDiaryScreen(selectedDate, null);
                 },
                 child: Text('추가하기'),
               ),
@@ -108,11 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<void> _navigateToSleepDiaryScreen(DateTime selectedDate) async {
+  Future<void> _navigateToSleepDiaryScreen(DateTime selectedDate, String? existingDiary) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SleepDiaryScreen(selectedDate: selectedDate, email: widget.email),
+        builder: (context) => SleepDiaryScreen(selectedDate: selectedDate, email: widget.email, existingDiary: existingDiary),
       ),
     );
     _loadSleepDiaries(); // 업데이트된 일기 데이터를 다시 로드합니다.

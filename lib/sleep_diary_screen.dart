@@ -4,8 +4,9 @@ import 'services/data_service.dart';
 class SleepDiaryScreen extends StatefulWidget {
   final DateTime selectedDate;
   final String email;
+  final String? existingDiary;
 
-  SleepDiaryScreen({required this.selectedDate, required this.email});
+  SleepDiaryScreen({required this.selectedDate, required this.email, this.existingDiary});
 
   @override
   _SleepDiaryScreenState createState() => _SleepDiaryScreenState();
@@ -28,16 +29,55 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
   @override
   void initState() {
     super.initState();
-    _loadExistingDiary();
+    if (widget.existingDiary != null) {
+      _loadExistingDiary(widget.existingDiary!);
+    }
   }
 
-  Future<void> _loadExistingDiary() async {
-    final existingDiary = await DataService.getDiaryByDate(widget.selectedDate, widget.email);
-    if (existingDiary != null) {
-      final diary = existingDiary['diary'];
-      // Parse the diary string to update the form fields
-      // Update _time1, _time2, ..., _controller4.text, ..., _qualityRatings based on the diary string
-    }
+  void _loadExistingDiary(String diary) {
+    final lines = diary.split('\n');
+
+    setState(() {
+      _time1 = _parseTimeOfDay(lines[0]);
+      _time2 = _parseTimeOfDay(lines[1]);
+      _time3 = _parseDuration(lines[2]);
+      _controller4.text = _parseText(lines[3]);
+      _time5 = _parseDuration(lines[4]);
+      _time6 = _parseTimeOfDay(lines[5]);
+      _time7 = _parseTimeOfDay(lines[6]);
+      _qualityRatings = _parseQualityRatings(lines[7]);
+      _controller9.text = _parseText(lines[8]);
+      _controller10.text = _parseText(lines[9]);
+      _controller11.text = _parseText(lines[10]);
+    });
+  }
+
+  TimeOfDay _parseTimeOfDay(String line) {
+    final time = line.split(': ')[1];
+    final timeParts = time.split(' ');
+    final timeOfDayParts = timeParts[0].split(':');
+    return TimeOfDay(
+      hour: int.parse(timeOfDayParts[0]),
+      minute: int.parse(timeOfDayParts[1]),
+    );
+  }
+
+  TimeOfDay _parseDuration(String line) {
+    final duration = line.split(': ')[1];
+    final durationParts = duration.split(' ');
+    return TimeOfDay(
+      hour: int.parse(durationParts[0].replaceAll('시간', '').trim()),
+      minute: int.parse(durationParts[1].replaceAll('분', '').trim()),
+    );
+  }
+
+  String _parseText(String line) {
+    return line.split(': ')[1];
+  }
+
+  List<bool> _parseQualityRatings(String line) {
+    final rating = int.parse(line.split(': ')[1]);
+    return List.generate(5, (index) => index + 1 == rating);
   }
 
   @override
