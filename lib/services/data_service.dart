@@ -191,4 +191,13 @@ class DataService {
       orderBy: "date DESC",
     );
   }
+
+  static Future<void> deleteChronotypeResult(int id) async {
+    final db = _database!;
+    await db.delete(
+      'chronotype_results',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
 }

@@ -59,6 +59,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         chronotypeScore = result['score'];
         chronotypeDate = DateTime.parse(result['date']);
       });
+    } else {
+      setState(() {
+        chronotypeResult = null;
+        chronotypeScore = null;
+        chronotypeDate = null;
+      });
     }
   }
 
@@ -188,6 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _refreshCalendar() {
     _loadSleepDiaries();
+    _loadChronotypeResult();
   }
 
   void _showHelp(BuildContext context) {
@@ -389,7 +396,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SurveyResultsScreen(email: widget.email),
+                              builder: (context) => SurveyResultsScreen(
+                                email: widget.email,
+                                onResultsDeleted: _loadChronotypeResult,
+                              ),
                             ),
                           );
                         },

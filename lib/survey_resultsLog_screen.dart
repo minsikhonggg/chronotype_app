@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 
 class SurveyResultsScreen extends StatefulWidget {
   final String email;
+  final VoidCallback onResultsDeleted;
 
-  SurveyResultsScreen({required this.email});
+  SurveyResultsScreen({required this.email, required this.onResultsDeleted});
 
   @override
   _SurveyResultsScreenState createState() => _SurveyResultsScreenState();
@@ -25,6 +26,66 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
     setState(() {
       _results = results;
     });
+    if (results.isEmpty) {
+      widget.onResultsDeleted(); // Notify parent if all results are deleted
+    }
+  }
+
+  Future<void> _deleteResult(int id) async {
+    await DataService.deleteChronotypeResult(id);
+    _loadResults(); // Refresh the list after deletion
+  }
+
+  Future<void> _showDeleteConfirmationDialog(int id) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('삭제 확인'),
+          content: Text('정말 삭제 하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('돌아가기'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close confirmation dialog
+                await _deleteResult(id);
+                _showDeletionSuccessDialog();
+              },
+              child: Text('삭제'),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red[200], // Light red color
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDeletionSuccessDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('삭제 완료'),
+          content: Text('설문 조사 결과가 삭제되었습니다.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close success dialog
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -58,6 +119,12 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
                     Text('결과: ${result['resultType']}'),
                     Text('점수: ${result['score']}'),
                   ],
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () async {
+                    await _showDeleteConfirmationDialog(result['id']);
+                  },
                 ),
               ),
             );
