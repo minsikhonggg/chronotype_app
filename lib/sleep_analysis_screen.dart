@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 
 class SleepAnalysisScreen extends StatefulWidget {
   final VoidCallback onDiaryDeleted;
+  final String email;
 
-  SleepAnalysisScreen({required this.onDiaryDeleted});
+  SleepAnalysisScreen({required this.onDiaryDeleted, required this.email});
 
   @override
   _SleepAnalysisScreenState createState() => _SleepAnalysisScreenState();
@@ -21,14 +22,14 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
   }
 
   Future<void> _loadSleepDiaries() async {
-    List<Map<String, dynamic>> diaries = await DataService.getSleepDiaries();
+    List<Map<String, dynamic>> diaries = await DataService.getSleepDiaries(widget.email);
     setState(() {
       _sleepDiaries = diaries;
     });
   }
 
   Future<void> _deleteDiary(DateTime date) async {
-    await DataService.deleteSleepDiary(date);
+    await DataService.deleteSleepDiary(date, widget.email);
     _loadSleepDiaries();
     widget.onDiaryDeleted(); // Notify the calendar to update
   }

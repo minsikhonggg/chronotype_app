@@ -9,9 +9,9 @@ import 'dart:io';
 import 'services/data_service.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String userId;
+  final String email;
 
-  ProfileScreen({required this.userId});
+  ProfileScreen({required this.email});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -25,12 +25,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserProfile();
-    _loadSleepDiaries();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await _loadUserProfile();
+    await _loadSleepDiaries();
+    await _loadChronotypeResult();
   }
 
   Future<void> _loadUserProfile() async {
-    final user = await DataService.getUserById(widget.userId);
+    final user = await DataService.getUserByEmail(widget.email);
     if (user != null && user['imagePath'] != null) {
       setState(() {
         profileImagePath = user['imagePath'];
@@ -39,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadSleepDiaries() async {
-    List<Map<String, dynamic>> diaries = await DataService.getSleepDiaries();
+    List<Map<String, dynamic>> diaries = await DataService.getSleepDiaries(widget.email);
     setState(() {
       sleepDiary = {
         for (var diary in diaries) DateTime.parse(diary['date']): diary['diary']
@@ -47,8 +52,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  Future<void> _loadChronotypeResult() async {
+    final result = await DataService.getChronotypeResult(widget.email);
+    if (result != null) {
+      setState(() {
+        chronotypeResult = result;
+      });
+    }
+  }
+
   Future<void> _showSleepDiaryDialog(DateTime selectedDate) async {
-    final diaryEntry = await DataService.getDiaryByDate(selectedDate);
+    final diaryEntry = await DataService.getDiaryByDate(selectedDate, widget.email);
 
     showDialog(
       context: context,
@@ -97,10 +111,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SleepDiaryScreen(selectedDate: selectedDate),
+        builder: (context) => SleepDiaryScreen(selectedDate: selectedDate, email: widget.email),
       ),
     );
-    _loadSleepDiaries(); // 업데이트된 일기 데이터를 다시 로드합니다.
+    await _loadSleepDiaries(); // 업데이트된 일기 데이터를 다시 로드합니다.
   }
 
   void _refreshCalendar() {
@@ -162,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           final updatedImagePath = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileEditScreen(userId: widget.userId),
+                              builder: (context) => ProfileEditScreen(email: widget.email),
                             ),
                           );
                           if (updatedImagePath != null) {
@@ -184,6 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             setState(() {
                               chronotypeResult = result;
                             });
+                            await DataService.saveChronotypeResult(widget.email, result);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -260,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SleepAnalysisScreen(onDiaryDeleted: _refreshCalendar),
+                              builder: (context) => SleepAnalysisScreen(onDiaryDeleted: _refreshCalendar, email: widget.email),
                             ),
                           );
                         },

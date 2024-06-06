@@ -3,8 +3,9 @@ import 'services/data_service.dart';
 
 class SleepDiaryScreen extends StatefulWidget {
   final DateTime selectedDate;
+  final String email;
 
-  SleepDiaryScreen({required this.selectedDate});
+  SleepDiaryScreen({required this.selectedDate, required this.email});
 
   @override
   _SleepDiaryScreenState createState() => _SleepDiaryScreenState();
@@ -31,7 +32,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
   }
 
   Future<void> _loadExistingDiary() async {
-    final existingDiary = await DataService.getDiaryByDate(widget.selectedDate);
+    final existingDiary = await DataService.getDiaryByDate(widget.selectedDate, widget.email);
     if (existingDiary != null) {
       final diary = existingDiary['diary'];
       // Parse the diary string to update the form fields
@@ -103,11 +104,11 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
 11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요.: ${_controller11.text}
 ''';
 
-    final existingDiary = await DataService.getDiaryByDate(widget.selectedDate);
+    final existingDiary = await DataService.getDiaryByDate(widget.selectedDate, widget.email);
     if (existingDiary != null) {
-      await DataService.updateSleepDiary(widget.selectedDate, diary);
+      await DataService.updateSleepDiary(widget.selectedDate, diary, widget.email);
     } else {
-      await DataService.saveSleepDiary(widget.selectedDate, diary);
+      await DataService.saveSleepDiary(widget.selectedDate, diary, widget.email);
     }
     Navigator.pop(context, widget.selectedDate); // 프로필 화면으로 이동하며 선택한 날짜 반환
   }

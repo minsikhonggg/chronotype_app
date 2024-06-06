@@ -3,9 +3,15 @@ import 'signup_screen.dart';
 import 'services/data_service.dart';
 import 'profile_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isEmailValid = true;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +34,13 @@ class LoginScreen extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Email',
                 hintText: 'Enter your Email',
+                errorText: _isEmailValid ? null : 'Invalid email format',
               ),
+              onChanged: (value) {
+                setState(() {
+                  _isEmailValid = true;
+                });
+              },
             ),
             TextField(
               controller: _passwordController,
@@ -41,17 +53,23 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final user = await DataService.getUser(
-                  _emailController.text,
-                  _passwordController.text,
-                );
-                if (user != null) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen(userId: user['id'].toString())),
+                setState(() {
+                  _isEmailValid = _isValidEmail(_emailController.text);
+                });
+
+                if (_isEmailValid) {
+                  final user = await DataService.getUser(
+                    _emailController.text,
+                    _passwordController.text,
                   );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Failed')));
+                  if (user != null) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfileScreen(email: user['email'].toString())),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Failed')));
+                  }
                 }
               },
               child: Text('LOGIN'),
@@ -73,5 +91,10 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
   }
 }

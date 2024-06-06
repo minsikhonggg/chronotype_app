@@ -5,9 +5,9 @@ import 'services/data_service.dart';
 import 'profile_screen.dart'; // 프로필 페이지 import
 
 class ProfileEditScreen extends StatefulWidget {
-  final String userId;
+  final String email;
 
-  ProfileEditScreen({required this.userId});
+  ProfileEditScreen({required this.email});
 
   @override
   _ProfileEditScreenState createState() => _ProfileEditScreenState();
@@ -15,7 +15,6 @@ class ProfileEditScreen extends StatefulWidget {
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _imagePath;
@@ -27,11 +26,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> _loadUserProfile() async {
-    final user = await DataService.getUserById(widget.userId);
+    final user = await DataService.getUserByEmail(widget.email);
     if (user != null) {
       setState(() {
         _nameController.text = user['name'];
-        _emailController.text = user['email'];
         _phoneController.text = user['phone'] ?? '';
         _passwordController.text = user['password'];
         _imagePath = user['imagePath'];
@@ -81,7 +79,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               decoration: InputDecoration(labelText: 'Username'),
             ),
             TextField(
-              controller: _emailController,
+              controller: TextEditingController(text: widget.email),
               decoration: InputDecoration(labelText: 'Email'),
               enabled: false, // 이메일은 수정 불가
             ),
@@ -98,7 +96,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             ElevatedButton(
               onPressed: () async {
                 await DataService.updateUser(
-                  widget.userId,
+                  widget.email,
                   _nameController.text,
                   _phoneController.text,
                   _passwordController.text,
@@ -107,7 +105,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileScreen(userId: widget.userId),
+                    builder: (context) => ProfileScreen(email: widget.email),
                   ),
                 );
               },
