@@ -156,10 +156,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
   Future<void> _deleteDiary() async {
     await DataService.deleteSleepDiary(widget.selectedDate, widget.email);
     Navigator.pop(context); // 닫기 다이얼로그
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {

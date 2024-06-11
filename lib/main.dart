@@ -15,6 +15,17 @@ class MyApp extends StatelessWidget {
       title: 'Chronotype App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          ),
+        ),
+        cardTheme: CardTheme(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+          elevation: 5,
+        ),
       ),
       home: LoginScreen(),
     );

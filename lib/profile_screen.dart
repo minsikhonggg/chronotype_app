@@ -86,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () async {
                 await DataService.deleteSleepDiary(selectedDate, widget.email);
                 Navigator.pop(context); // 닫기 확인 다이얼로그
-                Navigator.pop(context); // 닫기 수면 일기 다이얼로그
+                Navigator.pop(context); // 닫기 수면일기 다이얼로그
                 _showDeletionSuccessDialog();
                 _loadSleepDiaries(); // 삭제 후 일기 데이터를 다시 로드합니다.
               },
@@ -186,7 +186,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SleepDiaryScreen(selectedDate: selectedDate, email: widget.email, existingDiary: existingDiary),
+        builder: (context) => SleepDiaryScreen(
+          selectedDate: selectedDate,
+          email: widget.email,
+          existingDiary: existingDiary,
+        ),
       ),
     );
     _loadSleepDiaries(); // 업데이트된 일기 데이터를 다시 로드합니다.
@@ -233,8 +237,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             expandedHeight: 200.0,
             automaticallyImplyLeading: false, // 뒤로 가기 버튼 제거
             flexibleSpace: FlexibleSpaceBar(
-              title: Text('프로필'),
-              background: Image.asset('assets/profile_background.jpeg', fit: BoxFit.cover),
+              title: Text('프로필', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset('assets/profile_background.jpeg', fit: BoxFit.cover),
+                  Container(
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
             ),
           ),
           SliverList(
@@ -292,6 +304,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue[100], // primary 대신 backgroundColor 사용
                           foregroundColor: Colors.black, // onPrimary 대신 foregroundColor 사용
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                         ),
                         child: Text('크로노 타입 체크 하기'),
                       ),
@@ -299,22 +315,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (chronotypeResult != null)
                         Column(
                           children: [
-                            Text(
-                              '최근 설문 결과',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
                             SizedBox(height: 10),
                             Text(
-                              '결과: $chronotypeResult',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              '점수: $chronotypeScore',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              '날짜: ${DateFormat('yyyy-MM-dd').format(chronotypeDate!)}',
-                              style: TextStyle(fontSize: 16),
+                              '$chronotypeResult',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ],
                         )
@@ -392,6 +396,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         icon: Icon(Icons.bar_chart),
                         label: Text('수면 일기 목록'),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        ),
                       ),
                       SizedBox(height: 20),
                       ElevatedButton.icon(
@@ -408,6 +418,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         icon: Icon(Icons.list),
                         label: Text('설문 조사 결과 관리'),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        ),
                       ),
                     ],
                   ),

@@ -101,11 +101,19 @@ class DataService {
 
   static Future<void> saveSleepDiary(DateTime date, String diary, String email) async {
     final db = _database!;
-    await db.insert(
-      'sleep_diary',
-      {'date': date.toIso8601String(), 'diary': diary, 'email': email},
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    // Check if a diary entry for the same date and email already exists
+    final existingDiary = await getDiaryByDate(date, email);
+    if (existingDiary != null) {
+      // Update the existing diary
+      await updateSleepDiary(date, diary, email);
+    } else {
+      // Insert a new diary
+      await db.insert(
+        'sleep_diary',
+        {'date': date.toIso8601String(), 'diary': diary, 'email': email},
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
 
   static Future<List<Map<String, dynamic>>> getSleepDiaries(String email) async {
