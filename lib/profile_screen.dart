@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'home.dart';
+import 'home_screen.dart';
 import 'profile_edit_screen.dart';
 import 'services/data_service.dart';
 import 'chronotype_survey_intro_screen.dart';
 import 'survey_resultsLog_screen.dart';
-import 'data_analysis_screen.dart';
+import 'bottom_navigation_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String email;
@@ -23,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int? chronotypeScore;
   DateTime? chronotypeDate;
   String? profileImagePath;
-  int _currentIndex = 2; // Profile screen index
+  int _currentIndex = 2;
 
   @override
   void initState() {
@@ -57,52 +57,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         chronotypeDate = null;
       });
     }
-  }
-
-  void _onTabTapped(int index) {
-    if (index == _currentIndex) return;
-
-    Widget nextScreen;
-    switch (index) {
-      case 0:
-        nextScreen = HomeScreen(email: widget.email);
-        break;
-      case 1:
-        nextScreen = DataAnalysisScreen(email: widget.email);
-        break;
-      case 2:
-        nextScreen = ProfileScreen(email: widget.email);
-        break;
-      default:
-        nextScreen = HomeScreen(email: widget.email);
-    }
-
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => nextScreen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.ease;
-
-          final tween = Tween(begin: begin, end: end);
-          final curvedAnimation = CurvedAnimation(
-            parent: animation,
-            curve: curve,
-          );
-
-          return SlideTransition(
-            position: tween.animate(curvedAnimation),
-            child: child,
-          );
-        },
-      ),
-    );
-
-    setState(() {
-      _currentIndex = index;
-    });
   }
 
   @override
@@ -264,26 +218,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Analysis',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        selectedItemColor: Colors.blueAccent,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        email: widget.email,
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'splash_screen.dart'; // Import the splash screen
-import 'services/data_service.dart';
-import 'home.dart';
+import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'data_analysis_screen.dart';
+import 'splash_screen.dart';
+import 'services/data_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

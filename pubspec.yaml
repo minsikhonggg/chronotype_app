@@ -35,7 +35,9 @@ dependencies:
   table_calendar: ^3.0.6
   fl_chart: ^0.68.0
   charts_flutter: ^0.11.0
-  intl: ^0.17.0 # 최신 버전 확인 후 입력
+  intl: ^0.17.0
+  provider: ^6.0.0
+  syncfusion_flutter_charts: ^20.1.59
 
 
 

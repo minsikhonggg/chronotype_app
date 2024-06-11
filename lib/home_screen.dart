@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-
 import 'profile_screen.dart';
-import 'sleep_diary_screen.dart'; // SleepDiaryScreen을 가져옵니다.
-import 'data_analysis_screen.dart';
+import 'sleep_diary_screen.dart';
+import 'sleep_diary_list_screen.dart';
 import 'services/data_service.dart';
+import 'bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   final String email;
@@ -18,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Map<DateTime, String> sleepDiary = {};
-  int _currentIndex = 0; // Home screen index
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -127,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () async {
                 await DataService.deleteSleepDiary(selectedDate, widget.email);
                 Navigator.pop(context);
+                Navigator.pop(context);
                 _showDeletionSuccessDialog();
                 _loadSleepDiaries();
               },
@@ -160,52 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
-  }
-
-  void _onTabTapped(int index) {
-    if (index == _currentIndex) return;
-
-    Widget nextScreen;
-    switch (index) {
-      case 0:
-        nextScreen = HomeScreen(email: widget.email);
-        break;
-      case 1:
-        nextScreen = DataAnalysisScreen(email: widget.email);
-        break;
-      case 2:
-        nextScreen = ProfileScreen(email: widget.email);
-        break;
-      default:
-        nextScreen = HomeScreen(email: widget.email);
-    }
-
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => nextScreen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.ease;
-
-          final tween = Tween(begin: begin, end: end);
-          final curvedAnimation = CurvedAnimation(
-            parent: animation,
-            curve: curve,
-          );
-
-          return SlideTransition(
-            position: tween.animate(curvedAnimation),
-            child: child,
-          );
-        },
-      ),
-    );
-
-    setState(() {
-      _currentIndex = index;
-    });
   }
 
   @override
@@ -302,11 +257,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DataAnalysisScreen(email: widget.email),
+                              builder: (context) => SleepDiaryListScreen(
+                                email: widget.email,
+                                onDiaryDeleted: _loadSleepDiaries,
+                              ),
                             ),
                           );
                         },
-                        icon: Icon(Icons.bar_chart),
+                        icon: Icon(Icons.list),
                         label: Text('수면 일기 목록'),
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -323,26 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Analysis',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        selectedItemColor: Colors.blueAccent,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        email: widget.email,
       ),
     );
   }

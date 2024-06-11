@@ -3,17 +3,17 @@ import 'services/data_service.dart';
 import 'package:intl/intl.dart';
 import 'sleep_diary_screen.dart';
 
-class SleepAnalysisScreen extends StatefulWidget {
+class SleepDiaryListScreen extends StatefulWidget {
   final VoidCallback onDiaryDeleted;
   final String email;
 
-  SleepAnalysisScreen({required this.onDiaryDeleted, required this.email});
+  SleepDiaryListScreen({required this.onDiaryDeleted, required this.email});
 
   @override
-  _SleepAnalysisScreenState createState() => _SleepAnalysisScreenState();
+  _SleepDiaryListScreenState createState() => _SleepDiaryListScreenState();
 }
 
-class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
+class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
   Map<String, List<Map<String, dynamic>>> _sleepDiariesByMonth = {};
 
   @override
@@ -289,7 +289,7 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sleep Analysis'),
+        title: Text('Sleep Diary List'),
         actions: [
           IconButton(
             icon: Icon(Icons.delete_forever),
