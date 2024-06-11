@@ -42,10 +42,17 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
     final time = line.split(': ')[1];
     final timeParts = time.split(' ');
     final timeOfDayParts = timeParts[0].split(':');
-    return TimeOfDay(
-      hour: int.parse(timeOfDayParts[0]),
-      minute: int.parse(timeOfDayParts[1]),
-    );
+    int hour = int.parse(timeOfDayParts[0]);
+    int minute = int.parse(timeOfDayParts[1]);
+    final period = timeParts[1].toLowerCase();
+
+    if (period == 'pm' && hour != 12) {
+      hour += 12;
+    } else if (period == 'am' && hour == 12) {
+      hour = 0;
+    }
+
+    return TimeOfDay(hour: hour, minute: minute);
   }
 
   @override
