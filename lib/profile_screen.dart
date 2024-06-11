@@ -145,13 +145,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pop(context);
                       _navigateToSleepDiaryScreen(selectedDate, diaryEntry['diary']);
                     },
-                    child: Text('수정하기'),
+                    child: Text('수정'),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       _showDeleteConfirmationDialog(selectedDate);
                     },
-                    child: Text('삭제하기'),
+                    child: Text('삭제'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[200], // 연한 빨간색
                     ),
@@ -168,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Navigator.pop(context);
                   _navigateToSleepDiaryScreen(selectedDate, null);
                 },
-                child: Text('추가하기'),
+                child: Text('추가'),
               ),
             TextButton(
               onPressed: () {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
+import 'splash_screen.dart'; // Import the splash screen
 import 'services/data_service.dart';
 
 void main() async {
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           elevation: 5,
         ),
       ),
-      home: LoginScreen(),
+      home: SplashScreen(), // Set the splash screen as the home screen
     );
   }
 }

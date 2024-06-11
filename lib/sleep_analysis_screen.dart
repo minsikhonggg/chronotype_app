@@ -125,7 +125,7 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
                       Navigator.pop(context);
                       _navigateToSleepDiaryScreen(selectedDate, widget.email, existingDiary['diary']);
                     },
-                    child: Text('수정하기'),
+                    child: Text('수정'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       shape: RoundedRectangleBorder(
@@ -137,7 +137,7 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
                     onPressed: () {
                       _showDeleteConfirmationDialog(selectedDate);
                     },
-                    child: Text('삭제하기'),
+                    child: Text('삭제'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
                       shape: RoundedRectangleBorder(
@@ -157,7 +157,7 @@ class _SleepAnalysisScreenState extends State<SleepAnalysisScreen> {
                   Navigator.pop(context);
                   _navigateToSleepDiaryScreen(selectedDate, widget.email, null);
                 },
-                child: Text('추가하기'),
+                child: Text('추가'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   shape: RoundedRectangleBorder(
