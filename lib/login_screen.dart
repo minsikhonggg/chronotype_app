@@ -3,9 +3,15 @@ import 'signup_screen.dart';
 import 'services/data_service.dart';
 import 'profile_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +41,18 @@ class LoginScreen extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter your password',
-                suffixIcon: Icon(Icons.visibility_off),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _passwordVisible = !_passwordVisible;
+                    });
+                  },
+                ),
               ),
-              obscureText: true,
+              obscureText: !_passwordVisible,
             ),
             SizedBox(height: 20),
             ElevatedButton(

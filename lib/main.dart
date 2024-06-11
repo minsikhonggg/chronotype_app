@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'splash_screen.dart'; // Import the splash screen
 import 'services/data_service.dart';
+import 'home.dart';
+import 'profile_screen.dart';
+import 'data_analysis_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +30,12 @@ class MyApp extends StatelessWidget {
           elevation: 5,
         ),
       ),
-      home: SplashScreen(), // Set the splash screen as the home screen
+      home: SplashScreen(),
+      routes: {
+        '/home': (context) => HomeScreen(email: 'example@example.com'),
+        '/profile': (context) => ProfileScreen(email: 'example@example.com'),
+        '/analysis': (context) => DataAnalysisScreen(email: 'example@example.com'),
+      },
     );
   }
 }

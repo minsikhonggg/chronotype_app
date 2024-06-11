@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'services/data_service.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  bool _passwordVisible = false;
+  bool _confirmPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +33,10 @@ class SignUpScreen extends StatelessWidget {
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                labelText: 'Full name',
+                labelText: 'Username',
+                counterText: '', // Hide the counter text
               ),
+              maxLength: 30,
             ),
             TextField(
               controller: _emailController,
@@ -39,22 +48,42 @@ class SignUpScreen extends StatelessWidget {
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
-                suffixIcon: Icon(Icons.visibility_off),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _passwordVisible = !_passwordVisible;
+                    });
+                  },
+                ),
               ),
-              obscureText: true,
+              obscureText: !_passwordVisible,
             ),
             TextField(
               controller: _confirmPasswordController,
               decoration: InputDecoration(
                 labelText: 'Confirm your password',
-                suffixIcon: Icon(Icons.visibility_off),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _confirmPasswordVisible = !_confirmPasswordVisible;
+                    });
+                  },
+                ),
               ),
-              obscureText: true,
+              obscureText: !_confirmPasswordVisible,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                if (_passwordController.text == _confirmPasswordController.text && _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
+                if (_passwordController.text == _confirmPasswordController.text &&
+                    _emailController.text.isNotEmpty &&
+                    _passwordController.text.isNotEmpty) {
                   await DataService.saveUser(
                     _nameController.text,
                     _emailController.text,

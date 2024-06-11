@@ -48,16 +48,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ImageProvider<Object> profileImage = _imagePath != null
-        ? FileImage(File(_imagePath!)) as ImageProvider<Object>
-        : AssetImage('assets/default_profile.png') as ImageProvider<Object>;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('프로필 수정'),
-        automaticallyImplyLeading: false, // 뒤로 가기 버튼 제거
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -65,7 +66,21 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               onTap: _pickImage,
               child: CircleAvatar(
                 radius: 50,
-                backgroundImage: profileImage,
+                backgroundColor: Colors.grey.shade200,
+                child: _imagePath != null
+                    ? ClipOval(
+                  child: Image.file(
+                    File(_imagePath!),
+                    fit: BoxFit.cover,
+                    width: 100,
+                    height: 100,
+                  ),
+                )
+                    : Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Colors.grey.shade800,
+                ),
               ),
             ),
             SizedBox(height: 10),
@@ -102,12 +117,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   _passwordController.text,
                   _imagePath,
                 );
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(email: widget.email),
-                  ),
-                );
+                Navigator.pop(context, true); // pop으로 수정
               },
               child: Text('적용'),
             ),
