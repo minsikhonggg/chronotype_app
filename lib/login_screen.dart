@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Sign In', // 로그인 타이틀
+              'Chrono tracker', // 로그인 타이틀
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
