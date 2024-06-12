@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
-import 'profile_screen.dart';
+import 'profile/profile_screen.dart';
 import 'data_analysis_screen.dart';
 import 'splash_screen.dart';
 import 'services/data_service.dart';

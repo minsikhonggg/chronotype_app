@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'profile_screen.dart';
+import '../profile/profile_screen.dart';
 
 class ChronotypeSurveyResultScreen extends StatelessWidget {
   final int totalScore;

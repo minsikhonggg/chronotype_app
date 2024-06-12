@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'data_analysis_screen.dart';
-import 'profile_screen.dart';
+import 'profile/profile_screen.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int currentIndex; // 현재 선택된 탭의 인덱스

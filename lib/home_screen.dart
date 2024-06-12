@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'sleep_diary_screen.dart';
-import 'sleep_diary_list_screen.dart';
+import 'sleep_diary/sleep_diary_screen.dart';
+import 'sleep_diary/sleep_diary_list_screen.dart';
 import 'services/data_service.dart';
 import 'bottom_navigation_bar.dart';
 

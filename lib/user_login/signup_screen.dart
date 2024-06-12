@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'services/data_service.dart';
+import '../services/data_service.dart';
 
 // 회원가입 화면 클래스
 class SignUpScreen extends StatefulWidget {

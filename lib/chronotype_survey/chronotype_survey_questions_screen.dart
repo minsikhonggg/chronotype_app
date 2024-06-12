@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'chronotype_survey_result_screen.dart';
-import 'services/data_service.dart';
+import '/services/data_service.dart';
 
 class ChronotypeSurveyQuestionsScreen extends StatefulWidget {
   final String email; // 사용자 이메일

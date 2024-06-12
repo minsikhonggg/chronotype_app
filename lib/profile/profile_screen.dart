@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'profile_edit_screen.dart';
-import 'services/data_service.dart';
-import 'chronotype_survey_intro_screen.dart';
-import 'survey_resultsLog_screen.dart';
-import 'bottom_navigation_bar.dart';
+import '../services/data_service.dart';
+import '../chronotype_survey/chronotype_survey_intro_screen.dart';
+import '../chronotype_survey/survey_resultsLog_screen.dart';
+import '../bottom_navigation_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String email;
