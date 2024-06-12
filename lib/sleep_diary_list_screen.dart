@@ -79,7 +79,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
 
   String _formatDate(String date) {
     final DateTime parsedDate = DateTime.parse(date);
-    return DateFormat('yyyy-MM-dd').format(parsedDate);
+    return DateFormat('< yyyy-MM-dd >').format(parsedDate);
   }
 
   Future<void> _navigateToSleepDiaryScreen(DateTime selectedDate, String email, String? existingDiary) async {
@@ -107,69 +107,48 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
             borderRadius: BorderRadius.circular(15.0),
           ),
           title: Text(
-            DateFormat('yyyy-MM-dd').format(selectedDate),
+            DateFormat('< yyyy-MM-dd >').format(selectedDate),
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: existingDiary != null
-              ? Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(existingDiary['diary']),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _navigateToSleepDiaryScreen(selectedDate, widget.email, existingDiary['diary']);
-                    },
-                    child: Text('수정'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+          content: SingleChildScrollView(
+            child: existingDiary != null
+                ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ..._buildSurveyStyleEntries(existingDiary['diary']),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _navigateToSleepDiaryScreen(selectedDate, widget.email, existingDiary['diary']);
+                      },
+                      child: Text('수정', style: TextStyle(color: Colors.black)),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _showDeleteConfirmationDialog(selectedDate);
+                      },
+                      child: Text('삭제', style: TextStyle(color: Colors.white)),
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.red,
                       ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _showDeleteConfirmationDialog(selectedDate);
-                    },
-                    child: Text('삭제'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )
-              : Text('작성된 수면 일기가 없습니다.'),
-          actions: [
-            if (existingDiary == null)
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _navigateToSleepDiaryScreen(selectedDate, widget.email, null);
-                },
-                child: Text('추가'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
+                  ],
                 ),
-              ),
+              ],
+            )
+                : Text('작성된 수면 일기가 없습니다.'),
+          ),
+          actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('닫기'),
+              child: Text('닫기', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -177,25 +156,51 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
     );
   }
 
+  List<Widget> _buildSurveyStyleEntries(String diary) {
+    final lines = diary.split('\n');
+    return lines.map((line) {
+      final parts = line.split(':');
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              parts[0] + (parts.length > 1 ? ':' : ''),
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16),
+            ),
+            if (parts.length > 1)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.blue[50],
+                  border: Border.all(color: Colors.black12),
+                ),
+                child: Text(
+                  parts.sublist(1).join(':'),
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+          ],
+        ),
+      );
+    }).toList();
+  }
+
   Future<void> _showDeleteConfirmationDialog(DateTime date) async {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          title: Text(
-            '삭제 확인',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: Text('정말 삭제 하시겠습니까?'),
+          title: Text('삭제 확인', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          content: Text('정말 삭제 하시겠습니까?', style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('돌아가기'),
+              child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -204,13 +209,9 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
                 Navigator.pop(context); // Close sleep diary dialog
                 _showDeletionSuccessDialog(); // Show deletion success dialog
               },
-              child: Text('삭제'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[200], // Light red color
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
+              child: Text('삭제', style: TextStyle(color: Colors.white)),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red,
               ),
             ),
           ],
@@ -237,7 +238,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('돌아가기'),
+              child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -245,12 +246,9 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
                 Navigator.pop(context); // Close confirmation dialog
                 _showDeletionSuccessDialog(); // Show deletion success dialog
               },
-              child: Text('삭제'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
+              child: Text('삭제', style: TextStyle(color: Colors.white)),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red,
               ),
             ),
           ],
@@ -264,20 +262,14 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          title: Text(
-            '삭제 완료',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: Text('수면 일기가 삭제되었습니다.'),
+          title: Text('삭제 완료', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          content: Text('수면 일기가 삭제되었습니다.', style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close success dialog
+                Navigator.pop(context);
               },
-              child: Text('확인'),
+              child: Text('닫기', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -289,7 +281,11 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sleep Diary List'),
+        title: Text(
+          '수면 일기 목록',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
         actions: [
           IconButton(
             icon: Icon(Icons.delete_forever),
@@ -329,7 +325,10 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
                       _formatDate(diary['date']),
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(diary['diary']),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _buildSurveyStyleEntries(diary['diary']),
+                    ),
                     onTap: () {
                       _showSleepDiaryDialog(date);
                     },

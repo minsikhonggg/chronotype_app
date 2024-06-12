@@ -17,7 +17,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('로그인'),
+        title: Text('로그인',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -34,6 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 labelText: 'Email',
                 hintText: 'Enter your Email',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
               ),
             ),
             TextField(
@@ -41,6 +50,12 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter your password',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _passwordVisible ? Icons.visibility : Icons.visibility_off,
@@ -81,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
               child: Text(
-                "Don't have an account? Sign up",
+                "계정이 없으신가요? 회원가입",
                 style: TextStyle(color: Colors.orange),
               ),
             ),

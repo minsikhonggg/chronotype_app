@@ -18,7 +18,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('회원가입'),
+        title: Text('회원가입',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -35,6 +38,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               decoration: InputDecoration(
                 labelText: 'Username',
                 counterText: '', // Hide the counter text
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
               ),
               maxLength: 30,
             ),
@@ -42,12 +51,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
+                hintText: 'Enter your email (e.g., example@example.com)',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
               ),
             ),
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _passwordVisible ? Icons.visibility : Icons.visibility_off,
@@ -65,6 +87,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _confirmPasswordController,
               decoration: InputDecoration(
                 labelText: 'Confirm your password',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _confirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -103,7 +131,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Already have an account? Login',
+                '이미 계정이 있으신가요? Login',
                 style: TextStyle(color: Colors.orange),
               ),
             ),

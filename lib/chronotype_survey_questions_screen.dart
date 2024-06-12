@@ -257,7 +257,10 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('크로노타입 설문'),
+        title: Text('크로노타입 설문',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: _previousQuestion,
@@ -274,13 +277,15 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${index + 1} / ${_questions.length}',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Center(
+                  child: Text(
+                    '${index + 1} / ${_questions.length}',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 SizedBox(height: 20),
                 Text(
-                  '${index + 1}. ${question['question']}', // 인덱스를 이용하여 질문 번호 추가
+                  question['question'],
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),

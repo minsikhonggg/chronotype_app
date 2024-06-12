@@ -19,6 +19,7 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   int _currentIndex = 1;
   DateTime? _selectedMonth;
   ZoomPanBehavior? _zoomPanBehavior;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
       _sleepData.sort((a, b) => a.date.compareTo(b.date));
 
       _filterDataByMonth(_selectedMonth);
+      _isLoading = false;
     });
   }
 
@@ -73,6 +75,8 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   double _adjustedTime(TimeOfDay time) {
     if (time.period == 'pm') {
       return _convertToDouble(time) + 12;
+    } else if (time.period == 'am' && time.hour == 12) {
+      return 24; // 12am case
     } else {
       return _convertToDouble(time) + 24;
     }
@@ -119,7 +123,11 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Data Analysis'),
+        title: Text(
+          '수면 데이터 분석',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
         actions: [
           IconButton(
             icon: Icon(Icons.calendar_today),
@@ -137,7 +145,9 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
             ),
           SizedBox(height: 16), // Add some spacing between the text and the chart
           Expanded(
-            child: _filteredSleepData.isNotEmpty
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : _filteredSleepData.isNotEmpty
                 ? SfCartesianChart(
               primaryXAxis: DateTimeAxis(
                 dateFormat: DateFormat('yyyy. MM. dd'),
@@ -186,8 +196,8 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
                   xValueMapper: (_SleepData data, _) => data.date,
                   lowValueMapper: (_SleepData data, _) => _adjustedTime(data.timeToSleep),
                   highValueMapper: (_SleepData data, _) => _adjustedTime(data.timeOutOfBed),
-                  name: 'Sleep Duration',
-                  color: Colors.blue.withOpacity(0.5), // Color for better visualization
+                  name: '수면 시작 ~ 최종 기상',
+                  color: Colors.red.withOpacity(0.5), // Color for better visualization
                   markerSettings: MarkerSettings(isVisible: true),
                   dataLabelSettings: DataLabelSettings(isVisible: false),
                 ),
@@ -196,13 +206,16 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
                   xValueMapper: (_SleepData data, _) => data.date,
                   lowValueMapper: (_SleepData data, _) => _adjustedTime(data.timeToBed),
                   highValueMapper: (_SleepData data, _) => _adjustedTime(data.timeToLastAwake),
-                  name: 'Sleep Attempt and Last Awake Time',
-                  color: Colors.green.withOpacity(0.5), // Color for better visualization
+                  name: '수면 시도 ~ 마지막 깨어남',
+                  color: Colors.blue.withOpacity(0.5), // Color for better visualization
                   markerSettings: MarkerSettings(isVisible: true),
                   dataLabelSettings: DataLabelSettings(isVisible: false),
                 ),
               ],
-              legend: Legend(isVisible: true),
+              legend: Legend(
+                isVisible: true,
+                textStyle: TextStyle(fontWeight: FontWeight.bold), // 볼드체 설정
+              ),
               tooltipBehavior: TooltipBehavior(
                 enable: true,
                 format: 'point.x', // Tooltip displays only date and label
@@ -210,7 +223,7 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
               ),
               zoomPanBehavior: _zoomPanBehavior,
             )
-                : Center(child: CircularProgressIndicator()),
+                : Center(child: Text('해당 월에 두 개 이상의 일기를 작성하세요.')),
           ),
         ],
       ),

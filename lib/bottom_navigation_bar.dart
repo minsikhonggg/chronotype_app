@@ -45,21 +45,23 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       onTap: _onTabTapped,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.house),
           label: 'Home',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.analytics),
-          label: 'Analysis',
+          label: '수면 분석',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Profile',
+          label: '프로필',
         ),
       ],
       selectedItemColor: Colors.blueAccent,
       unselectedItemColor: Colors.grey,
       showUnselectedLabels: true,
+      selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+      unselectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
     );
   }
 }

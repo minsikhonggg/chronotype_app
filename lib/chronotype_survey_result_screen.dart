@@ -18,7 +18,10 @@ class ChronotypeSurveyResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('크로노타입 설문 결과'),
+        title: Text('크로노타입 설문 결과',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -34,12 +37,12 @@ class ChronotypeSurveyResultScreen extends StatelessWidget {
               children: [
                 Text(
                   '총 점수',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, height: 2.0),
                 ),
                 SizedBox(height: 10),
                 Text(
                   '$totalScore점',
-                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.red),
+                  style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.red, height: 2.0),
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -48,13 +51,13 @@ class ChronotypeSurveyResultScreen extends StatelessWidget {
                       '42 ~ 58 점: 중간형\n'
                       '59 ~ 69 점: 온건한 아침형\n'
                       '70 ~ 86 점: 확실한 아침형',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18, height: 2.0),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Text(
                   '$resultType',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red, height: 2.0),
                 ),
                 SizedBox(height: 40),
                 ElevatedButton(

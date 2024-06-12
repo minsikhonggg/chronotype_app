@@ -138,8 +138,8 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
 7. 마지막으로 깬 후에 침대에서 나온 시간은 몇 시입니까?: ${_time7.format(context)}
 8. 자신의 수면의 질을 평가하면?: ${_qualityRatings.indexOf(true) + 1}
 9. 꿈을 꾸었습니까? 꾸었다면 어떤 내용이었습니까?: ${_controller9.text}
-10. 수면과 관련해서 달리 관찰된 내용이 있다면 적어주세요.: ${_controller10.text}
-11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요.: ${_controller11.text}
+10. 수면과 관련해서 달리 관찰된 내용이 있다면 적어주세요: ${_controller10.text}
+11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요: ${_controller11.text}
 ''';
 
     final existingDiary = await DataService.getDiaryByDate(widget.selectedDate, widget.email);
@@ -160,7 +160,10 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('수면 일기 작성 가이드'),
+        title: Text('수면 일기 작성 가이드',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -175,13 +178,14 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
             _buildTimePickerBox('7. 마지막으로 깬 후에 침대에서 나온 시간은 몇 시입니까?', 7, _time7),
             _buildQualityRatingBox('8. 자신의 수면의 질을 평가하면?'),
             _buildTextInputBox('9. 꿈을 꾸었습니까? 꾸었다면 어떤 내용이었습니까?', _controller9),
-            _buildTextInputBox('10. 수면과 관련해서 달리 관찰된 내용이 있다면 적어주세요.', _controller10),
-            _buildTextInputBox('11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요.', _controller11),
+            _buildTextInputBox('10. 수면과 관련해서 달리 관찰된 내용이 있다면 적어주세요', _controller10),
+            _buildTextInputBox('11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요', _controller11),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _saveDiary,
-              child: Text('저장'),
+              child: Text('저장', style: TextStyle(color: Colors.black)),
             ),
+
             if (widget.existingDiary != null)
               SizedBox(height: 10),
           ],

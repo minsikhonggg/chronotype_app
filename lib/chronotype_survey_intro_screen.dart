@@ -10,7 +10,11 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('크로노타입 설문 소개'),
+        title: Text(
+          '크로노타입 설문 소개',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
       ),
       body: PageView(
         children: [
@@ -77,7 +81,7 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               content,
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16, height: 2.0),
             ),
           ],
         ),
@@ -104,7 +108,7 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
               '당신은 아침형, 저녁형, 중간형 중 어디에 속합니까?\n'
                   '각각의 질문에 대해 최근 몇 주 동안 자신이 느낀 바와 가장 일치하는 대답에 체크하세요. '
                   '설문을 마친 다음에는 점수를 합산해서 자신의 크로노타입을 확인합니다.',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16, height: 2.0),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),

@@ -52,9 +52,9 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('돌아가기'),
+              child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () async {
                 Navigator.pop(context); // Close confirmation dialog
                 await _deleteResult(id);
@@ -62,7 +62,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
               },
               child: Text('삭제'),
               style: TextButton.styleFrom(
-                backgroundColor: Colors.red[200], // Light red color
+                backgroundColor: Colors.red, // Light red color
                 foregroundColor: Colors.white,
               ),
             ),
@@ -84,9 +84,9 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('돌아가기'),
+              child: Text('취소', style: TextStyle(color: Colors.black)),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () async {
                 Navigator.pop(context); // Close confirmation dialog
                 await _deleteAllResults();
@@ -94,7 +94,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
               },
               child: Text('삭제'),
               style: TextButton.styleFrom(
-                backgroundColor: Colors.red[200], // Light red color
+                backgroundColor: Colors.red, // Light red color
                 foregroundColor: Colors.white,
               ),
             ),
@@ -116,7 +116,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
               onPressed: () {
                 Navigator.pop(context); // Close success dialog
               },
-              child: Text('확인'),
+              child: Text('닫기', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -128,7 +128,10 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('설문 조사 결과 관리'),
+        title: Text('설문 조사 결과 관리',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
+        ),
+        centerTitle: true, // 중앙 정렬
         actions: [
           IconButton(
             icon: Icon(Icons.delete_forever),
@@ -165,7 +168,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
                   ],
                 ),
                 trailing: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
+                  icon: Icon(Icons.delete),
                   onPressed: () async {
                     await _showDeleteConfirmationDialog(result['id']);
                   },
