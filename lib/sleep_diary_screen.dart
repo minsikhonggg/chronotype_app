@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'services/data_service.dart';
+import 'package:intl/intl.dart';  // Add this line
 
 class SleepDiaryScreen extends StatefulWidget {
   final DateTime selectedDate;
@@ -54,12 +55,9 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
 
   TimeOfDay _parseTimeOfDay(String line) {
     final time = line.split(': ')[1];
-    final timeParts = time.split(' ');
-    final timeOfDayParts = timeParts[0].split(':');
-    return TimeOfDay(
-      hour: int.parse(timeOfDayParts[0]),
-      minute: int.parse(timeOfDayParts[1]),
-    );
+    final format = DateFormat.jm();
+    final dateTime = format.parse(time);
+    return TimeOfDay.fromDateTime(dateTime);
   }
 
   TimeOfDay _parseDuration(String line) {
@@ -309,7 +307,9 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
                       });
                     },
                   ),
-                  Text('${index + 1}. ${(index == 0 ? '아주 나쁘다' : index == 4 ? '아주 좋다' : '보통')}')
+                  Text(
+                    '${index + 1}. ${(index == 0 ? '아주 나쁘다' : index == 1 ? '나쁘다' : index == 2 ? '보통' : index == 3 ? '좋다' : '아주 좋다')}',
+                  )
                 ],
               );
             }),
