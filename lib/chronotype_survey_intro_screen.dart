@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'chronotype_survey_questions_screen.dart';
 
 class ChronotypeSurveyIntroScreen extends StatelessWidget {
-  final String email;
+  final String email; // 사용자 이메일
 
-  ChronotypeSurveyIntroScreen({required this.email});
+  const ChronotypeSurveyIntroScreen({Key? key, required this.email}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           '크로노타입 설문 소개',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
         ),
@@ -18,6 +18,7 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
       ),
       body: PageView(
         children: [
+          // 각 페이지 구성
           _buildPage(
             context,
             title: '크로노타입(Chronotype)이란?',
@@ -53,12 +54,13 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
                 '필요에 따라 빛 노출 시간, 운동 시간, 식사 시간을 조절함으로써 크로노타입을 변화시킬 수도 있습니다.',
             emoji: '☀️🏋️🍽️',
           ),
-          _buildSurveyStartPage(context),
+          _buildSurveyStartPage(context), // 설문 시작 페이지
         ],
       ),
     );
   }
 
+  // 각 페이지 구성 함수
   Widget _buildPage(BuildContext context, {required String title, required String content, required String emoji}) {
     return Center(
       child: Padding(
@@ -69,19 +71,19 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold), // 타이틀 텍스트 스타일
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20), // 간격
             Center(
               child: Text(
                 emoji,
-                style: TextStyle(fontSize: 80),
+                style: const TextStyle(fontSize: 80), // 이모지 텍스트 스타일
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20), // 간격
             Text(
               content,
-              style: TextStyle(fontSize: 16, height: 2.0),
+              style: const TextStyle(fontSize: 16, height: 2.0), // 본문 텍스트 스타일
             ),
           ],
         ),
@@ -89,6 +91,7 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
     );
   }
 
+  // 설문 시작 페이지 구성 함수
   Widget _buildSurveyStartPage(BuildContext context) {
     return Center(
       child: Padding(
@@ -97,43 +100,43 @@ class ChronotypeSurveyIntroScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
+            const Center(
               child: Text(
                 '📝',
-                style: TextStyle(fontSize: 80),
+                style: TextStyle(fontSize: 80), // 이모지 텍스트 스타일
               ),
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20), // 간격
+            const Text(
               '당신은 아침형, 저녁형, 중간형 중 어디에 속합니까?\n'
                   '각각의 질문에 대해 최근 몇 주 동안 자신이 느낀 바와 가장 일치하는 대답에 체크하세요. '
                   '설문을 마친 다음에는 점수를 합산해서 자신의 크로노타입을 확인합니다.',
-              style: TextStyle(fontSize: 16, height: 2.0),
-              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, height: 2.0), // 본문 텍스트 스타일
+              textAlign: TextAlign.center, // 텍스트 중앙 정렬
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20), // 간격
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChronotypeSurveyQuestionsScreen(email: email),
+                    builder: (context) => ChronotypeSurveyQuestionsScreen(email: email), // 설문 질문 화면으로 이동
                   ),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                backgroundColor: Colors.blue, // 버튼 배경색
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10), // 버튼 패딩
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(30.0), // 버튼 모서리 둥글게
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('설문 시작', style: TextStyle(fontSize: 16)),
-                  SizedBox(width: 10),
-                  Icon(Icons.arrow_forward),
+                children: const [
+                  Text('설문 시작', style: TextStyle(fontSize: 16)), // 버튼 텍스트
+                  SizedBox(width: 10), // 간격
+                  Icon(Icons.arrow_forward), // 화살표 아이콘
                 ],
               ),
             ),

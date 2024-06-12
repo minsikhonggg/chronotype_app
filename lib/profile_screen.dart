@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'home_screen.dart';
 import 'profile_edit_screen.dart';
 import 'services/data_service.dart';
 import 'chronotype_survey_intro_screen.dart';
@@ -11,7 +9,7 @@ import 'bottom_navigation_bar.dart';
 class ProfileScreen extends StatefulWidget {
   final String email;
 
-  ProfileScreen({required this.email});
+  const ProfileScreen({required this.email, Key? key}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -23,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int? chronotypeScore;
   DateTime? chronotypeDate;
   String? profileImagePath;
-  int _currentIndex = 2;
+  final int _currentIndex = 2;
 
   @override
   void initState() {
@@ -70,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           '프로필',
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -88,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: CircleAvatar(
                   radius: 50,
@@ -109,16 +107,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 userName ?? 'Loading...',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               Text(
                 widget.email,
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
@@ -135,18 +133,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow, // 사진에 나오는 노란색
+                    backgroundColor: Colors.yellow,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                     padding:
-                    EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                   ),
-                  child: Text('프로필 수정'),
+                  child: const Text('프로필 수정'),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: Card(
                   shape: RoundedRectangleBorder(
@@ -154,27 +152,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   elevation: 4,
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           '크로노타입',
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         if (chronotypeResult != null)
-                            Text('$chronotypeResult', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigoAccent))
+                          Text(
+                            '$chronotypeResult',
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.indigoAccent),
+                          )
                         else
-                            Text('설문을 시작하세요!', style: TextStyle(fontSize: 16))
-
+                          const Text('설문을 시작하세요!',
+                              style: TextStyle(fontSize: 16)),
                       ],
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
                   onPressed: () async {
@@ -199,27 +203,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     }
                   },
-
-                  icon: Icon(Icons.check_box, color: Colors.green),
-                  label: Text('크로노 타입 체크 하기'),
+                  icon: const Icon(Icons.check_box, color: Colors.green),
+                  label: const Text('크로노 타입 체크 하기'),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SurveyResultsScreen(
+                        builder: (context) => SurveyResultsLogScreen(
                           email: widget.email,
                           onResultsDeleted: _loadChronotypeResult,
                         ),
                       ),
                     );
                   },
-                  icon: Icon(Icons.list, color: Colors.black),
-                  label: Text(
+                  icon: const Icon(Icons.list, color: Colors.black),
+                  label: const Text(
                     '설문 조사 결과 목록',
                     style: TextStyle(color: Colors.black), // 버튼 텍스트 색상 변경
                   ),
@@ -228,8 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                   ),
                 ),
               ),

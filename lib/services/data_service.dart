@@ -4,9 +4,11 @@ import 'package:path/path.dart';
 class DataService {
   static Database? _database;
 
+  // 데이터베이스 초기화 함수
   static Future<void> init() async {
     if (_database != null) return;
 
+    // 데이터베이스 열기 및 테이블 생성
     _database = await openDatabase(
       join(await getDatabasesPath(), 'user_database.db'),
       onCreate: (db, version) async {
@@ -50,6 +52,7 @@ class DataService {
     );
   }
 
+  // 사용자 저장 함수
   static Future<void> saveUser(String name, String email, String password, [String? imagePath]) async {
     final db = _database!;
     await db.insert(
@@ -59,6 +62,7 @@ class DataService {
     );
   }
 
+  // 사용자 정보 가져오기 함수 (이메일과 비밀번호로)
   static Future<Map<String, dynamic>?> getUser(String email, String password) async {
     final db = _database!;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -74,6 +78,7 @@ class DataService {
     }
   }
 
+  // 이메일로 사용자 정보 가져오기 함수
   static Future<Map<String, dynamic>?> getUserByEmail(String email) async {
     final db = _database!;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -89,6 +94,7 @@ class DataService {
     }
   }
 
+  // 사용자 정보 업데이트 함수
   static Future<void> updateUser(String email, String name, String phone, String password, [String? imagePath]) async {
     final db = _database!;
     await db.update(
@@ -99,15 +105,13 @@ class DataService {
     );
   }
 
+  // 수면 일기 저장 함수
   static Future<void> saveSleepDiary(DateTime date, String diary, String email) async {
     final db = _database!;
-    // Check if a diary entry for the same date and email already exists
     final existingDiary = await getDiaryByDate(date, email);
     if (existingDiary != null) {
-      // Update the existing diary
       await updateSleepDiary(date, diary, email);
     } else {
-      // Insert a new diary
       await db.insert(
         'sleep_diary',
         {'date': date.toIso8601String(), 'diary': diary, 'email': email},
@@ -116,6 +120,7 @@ class DataService {
     }
   }
 
+  // 모든 수면 일기 가져오기 함수
   static Future<List<Map<String, dynamic>>> getSleepDiaries(String email) async {
     final db = _database!;
     return await db.query(
@@ -125,6 +130,7 @@ class DataService {
     );
   }
 
+  // 특정 날짜의 수면 일기 가져오기 함수
   static Future<Map<String, dynamic>?> getDiaryByDate(DateTime date, String email) async {
     final db = _database!;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -140,6 +146,7 @@ class DataService {
     }
   }
 
+  // 수면 일기 업데이트 함수
   static Future<void> updateSleepDiary(DateTime date, String diary, String email) async {
     final db = _database!;
     await db.update(
@@ -150,6 +157,7 @@ class DataService {
     );
   }
 
+  // 수면 일기 삭제 함수
   static Future<void> deleteSleepDiary(DateTime date, String email) async {
     final db = _database!;
     await db.delete(
@@ -159,6 +167,7 @@ class DataService {
     );
   }
 
+  // 모든 수면 일기 삭제 함수
   static Future<void> deleteAllSleepDiaries(String email) async {
     final db = _database!;
     await db.delete(
@@ -168,6 +177,7 @@ class DataService {
     );
   }
 
+  // 특정 월의 수면 일기 삭제 함수
   static Future<void> deleteSleepDiariesByMonth(String email, String month) async {
     final db = _database!;
     await db.delete(
@@ -177,6 +187,7 @@ class DataService {
     );
   }
 
+  // 크로노타입 결과 저장 함수
   static Future<void> saveChronotypeResult(String email, String resultType, int score, String date) async {
     final db = _database!;
     await db.insert(
@@ -191,6 +202,7 @@ class DataService {
     );
   }
 
+  // 최신 크로노타입 결과 가져오기 함수
   static Future<Map<String, dynamic>?> getLatestChronotypeResult(String email) async {
     final db = _database!;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -208,6 +220,7 @@ class DataService {
     }
   }
 
+  // 모든 크로노타입 결과 가져오기 함수
   static Future<List<Map<String, dynamic>>> getChronotypeResults(String email) async {
     final db = _database!;
     return await db.query(
@@ -218,6 +231,7 @@ class DataService {
     );
   }
 
+  // 크로노타입 결과 삭제 함수
   static Future<void> deleteChronotypeResult(int id) async {
     final db = _database!;
     await db.delete(
@@ -227,6 +241,7 @@ class DataService {
     );
   }
 
+  // 모든 크로노타입 결과 삭제 함수
   static Future<void> deleteAllChronotypeResults(String email) async {
     final db = _database!;
     await db.delete(

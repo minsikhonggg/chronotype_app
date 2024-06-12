@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'services/data_service.dart';
-import 'package:intl/intl.dart';  // Add this line
+import 'package:intl/intl.dart';
 
 class SleepDiaryScreen extends StatefulWidget {
   final DateTime selectedDate;
   final String email;
   final String? existingDiary;
 
-  SleepDiaryScreen({required this.selectedDate, required this.email, this.existingDiary});
+  const SleepDiaryScreen({
+    Key? key,
+    required this.selectedDate,
+    required this.email,
+    this.existingDiary,
+  }) : super(key: key);
 
   @override
   _SleepDiaryScreenState createState() => _SleepDiaryScreenState();
 }
 
 class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
-  TimeOfDay _time1 = TimeOfDay(hour: 7, minute: 0);
-  TimeOfDay _time2 = TimeOfDay(hour: 7, minute: 0);
-  TimeOfDay _time3 = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _time5 = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _time6 = TimeOfDay(hour: 7, minute: 0);
-  TimeOfDay _time7 = TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time1 = const TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time2 = const TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time3 = const TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _time5 = const TimeOfDay(hour: 0, minute: 0);
+  TimeOfDay _time6 = const TimeOfDay(hour: 7, minute: 0);
+  TimeOfDay _time7 = const TimeOfDay(hour: 7, minute: 0);
   final TextEditingController _controller4 = TextEditingController();
   final TextEditingController _controller9 = TextEditingController();
   final TextEditingController _controller10 = TextEditingController();
@@ -148,19 +153,18 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     } else {
       await DataService.saveSleepDiary(widget.selectedDate, diary, widget.email);
     }
-    Navigator.pop(context, widget.selectedDate); // 프로필 화면으로 이동하며 선택한 날짜 반환
+    if (mounted) {
+      Navigator.pop(context, widget.selectedDate); // 프로필 화면으로 이동하며 선택한 날짜 반환
+    }
   }
 
-  Future<void> _deleteDiary() async {
-    await DataService.deleteSleepDiary(widget.selectedDate, widget.email);
-    Navigator.pop(context); // 닫기 다이얼로그
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('수면 일기 작성 가이드',
+        title: const Text(
+          '수면 일기 작성 가이드',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
         ),
         centerTitle: true, // 중앙 정렬
@@ -180,14 +184,13 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
             _buildTextInputBox('9. 꿈을 꾸었습니까? 꾸었다면 어떤 내용이었습니까?', _controller9),
             _buildTextInputBox('10. 수면과 관련해서 달리 관찰된 내용이 있다면 적어주세요', _controller10),
             _buildTextInputBox('11. 직장이나 가정에서 겪은 어려운 상황 등 수면에 영향을 미쳤을지도 모른다고 생각되는 사건이 낮에 있었다면 적어주세요', _controller11),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _saveDiary,
-              child: Text('저장', style: TextStyle(color: Colors.black)),
+              child: const Text('저장', style: TextStyle(color: Colors.black)),
             ),
-
             if (widget.existingDiary != null)
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
           ],
         ),
       ),
@@ -205,19 +208,19 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 16)),
+          Text(label, style: const TextStyle(fontSize: 16)),
           Row(
             children: [
               GestureDetector(
                 onTap: () => _selectTime(context, timeIndex),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
                     border: Border.all(color: Colors.black12),
                   ),
-                  child: Text('${selectedTime.format(context)}'),
+                  child: Text(selectedTime.format(context)),
                 ),
               ),
             ],
@@ -238,13 +241,13 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 16)),
+          Text(label, style: const TextStyle(fontSize: 16)),
           Row(
             children: [
               GestureDetector(
                 onTap: () => _selectTime(context, timeIndex),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
                     color: Colors.white,
@@ -271,11 +274,11 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 16)),
+          Text(label, style: const TextStyle(fontSize: 16)),
           TextField(
             controller: controller,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(hintText: '숫자를 입력하세요'),
+            decoration: const InputDecoration(hintText: '숫자를 입력하세요'),
           ),
         ],
       ),
@@ -293,7 +296,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 16)),
+          Text(label, style: const TextStyle(fontSize: 16)),
           Column(
             children: List.generate(5, (index) {
               return Row(
@@ -334,10 +337,10 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 16)),
+          Text(label, style: const TextStyle(fontSize: 16)),
           TextField(
             controller: controller,
-            decoration: InputDecoration(hintText: '내용을 입력하세요'),
+            decoration: const InputDecoration(hintText: '내용을 입력하세요'),
             maxLines: null,
           ),
         ],

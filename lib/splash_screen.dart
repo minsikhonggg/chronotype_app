@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'login_screen.dart'; // Make sure this points to your login screen
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -15,11 +17,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: 1), // Fade-out duration
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
 
-    Timer(Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 3), () {
       _controller.forward();
       setState(() {
         _opacity = 0.0;
@@ -30,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (status == AnimationStatus.completed) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       }
     });
@@ -50,11 +52,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           padding: const EdgeInsets.all(16.0),
           child: AnimatedOpacity(
             opacity: _opacity,
-            duration: Duration(seconds: 1), // Fade-out duration
+            duration: const Duration(seconds: 1),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   '우리가 지금보다 더 아프지 않고\n 더 미치지 않은 것은\n '
                       '오로지 자연의 모든 은총 중에서도\n 가장 큰 축복인 잠 덕분이다.',
                   textAlign: TextAlign.center,
@@ -63,8 +65,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   '- 올더스 헉슬리',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -72,11 +74,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 40),
-                SizedBox(
-                  width: 15, // Set the width of the loading indicator
-                  height: 15, // Set the height of the loading indicator
-                  child: CircularProgressIndicator(), // Optional loading indicator
+                const SizedBox(height: 40),
+                const SizedBox(
+                  width: 15,
+                  height: 15,
+                  child: CircularProgressIndicator(),
                 ),
               ],
             ),

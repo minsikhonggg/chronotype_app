@@ -8,13 +8,13 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('ko_KR', null); // 이 라인을 추가합니다.
+  await initializeDateFormatting('ko_KR', null);
   await DataService.init();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +41,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: SplashScreen(),
+      home: const SplashScreen(),
       routes: {
-        '/home': (context) => HomeScreen(email: 'example@example.com'),
-        '/profile': (context) => ProfileScreen(email: 'example@example.com'),
-        '/analysis': (context) => DataAnalysisScreen(email: 'example@example.com'),
+        '/home': (context) => const HomeScreen(email: 'example@example.com'),
+        '/profile': (context) => const ProfileScreen(email: 'example@example.com'),
+        '/analysis': (context) => const DataAnalysisScreen(email: 'example@example.com'),
       },
     );
   }

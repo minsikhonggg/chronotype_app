@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'services/data_service.dart';
 import 'package:intl/intl.dart';
 
-class SurveyResultsScreen extends StatefulWidget {
+class SurveyResultsLogScreen extends StatefulWidget {
   final String email;
   final VoidCallback onResultsDeleted;
-
-  SurveyResultsScreen({required this.email, required this.onResultsDeleted});
+  const SurveyResultsLogScreen({Key? key, required this.email, required this.onResultsDeleted}) : super(key: key);
 
   @override
-  _SurveyResultsScreenState createState() => _SurveyResultsScreenState();
+  _SurveyResultsLogScreenState createState() => _SurveyResultsLogScreenState();
 }
 
-class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
+class _SurveyResultsLogScreenState extends State<SurveyResultsLogScreen> {
   List<Map<String, dynamic>> _results = [];
 
   @override
@@ -30,14 +29,14 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
 
   Future<void> _deleteResult(int id) async {
     await DataService.deleteChronotypeResult(id);
-    _loadResults(); // Refresh the list after deletion
-    widget.onResultsDeleted(); // Notify the profile screen to update
+    _loadResults();
+    widget.onResultsDeleted();
   }
 
   Future<void> _deleteAllResults() async {
     await DataService.deleteAllChronotypeResults(widget.email);
-    _loadResults(); // Refresh the list after deletion
-    widget.onResultsDeleted(); // Notify the profile screen to update
+    _loadResults();
+    widget.onResultsDeleted();
   }
 
   Future<void> _showDeleteConfirmationDialog(int id) async {
@@ -45,24 +44,24 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('삭제 확인'),
-          content: Text('정말 삭제 하시겠습니까?'),
+          title: const Text('삭제 확인'),
+          content: const Text('정말 삭제 하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('취소', style: TextStyle(color: Colors.black)),
+              child: const Text('취소', style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.pop(context); // Close confirmation dialog
+                Navigator.pop(context);
                 await _deleteResult(id);
                 _showDeletionSuccessDialog();
               },
-              child: Text('삭제'),
+              child: const Text('삭제'),
               style: TextButton.styleFrom(
-                backgroundColor: Colors.red, // Light red color
+                backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
             ),
@@ -77,14 +76,14 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('모두 삭제 확인'),
-          content: Text('정말 모든 설문 조사 결과를 삭제하시겠습니까?'),
+          title: const Text('모두 삭제 확인'),
+          content: const Text('정말 모든 설문 조사 결과를 삭제하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('취소', style: TextStyle(color: Colors.black)),
+              child: const Text('취소', style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -92,7 +91,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
                 await _deleteAllResults();
                 _showDeletionSuccessDialog();
               },
-              child: Text('삭제'),
+              child: const Text('삭제'),
               style: TextButton.styleFrom(
                 backgroundColor: Colors.red, // Light red color
                 foregroundColor: Colors.white,
@@ -109,14 +108,14 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('삭제 완료'),
-          content: Text('설문 조사 결과가 삭제되었습니다.'),
+          title: const Text('삭제 완료'),
+          content: const Text('설문 조사 결과가 삭제되었습니다.'),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close success dialog
+                Navigator.pop(context);
               },
-              child: Text('닫기', style: TextStyle(color: Colors.black)),
+              child: const Text('닫기', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -128,13 +127,13 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('설문 조사 결과 관리',
+        title: const Text('설문 조사 결과 관리',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
         ),
         centerTitle: true, // 중앙 정렬
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_forever),
+            icon: const Icon(Icons.delete_forever),
             onPressed: () {
               _showDeleteAllConfirmationDialog();
             },
@@ -144,7 +143,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _results.isEmpty
-            ? Center(
+            ? const Center(
           child: Text('설문 조사 결과가 없습니다.'),
         )
             : ListView.builder(
@@ -158,7 +157,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
                 contentPadding: const EdgeInsets.all(16.0),
                 title: Text(
                   DateFormat('yyyy-MM-dd').format(DateTime.parse(result['date'])),
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +167,7 @@ class _SurveyResultsScreenState extends State<SurveyResultsScreen> {
                   ],
                 ),
                 trailing: IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () async {
                     await _showDeleteConfirmationDialog(result['id']);
                   },

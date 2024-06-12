@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'services/data_service.dart';
-import 'profile_screen.dart'; // 프로필 페이지 import
 
 class ProfileEditScreen extends StatefulWidget {
   final String email;
 
-  ProfileEditScreen({required this.email});
+  const ProfileEditScreen({Key? key, required this.email}) : super(key: key);
 
   @override
   _ProfileEditScreenState createState() => _ProfileEditScreenState();
@@ -38,7 +37,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imagePath = pickedFile.path;
@@ -50,12 +49,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('프로필 수정',
+        title: const Text(
+          '프로필 수정',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
         ),
         centerTitle: true, // 중앙 정렬
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -86,15 +86,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _pickImage,
-              child: Text('사진 변경'),
+              child: const Text('사진 변경'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Username',
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey),
@@ -106,7 +106,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             ),
             TextField(
               controller: TextEditingController(text: widget.email),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey),
@@ -119,7 +119,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             ),
             TextField(
               controller: _phoneController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Phone Number',
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey),
@@ -131,7 +131,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey),
@@ -142,7 +142,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               ),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 await DataService.updateUser(
@@ -154,7 +154,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 );
                 Navigator.pop(context, true); // pop으로 수정
               },
-              child: Text('적용'),
+              child: const Text('적용'),
             ),
           ],
         ),

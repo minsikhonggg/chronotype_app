@@ -7,14 +7,14 @@ class SleepDiaryListScreen extends StatefulWidget {
   final VoidCallback onDiaryDeleted;
   final String email;
 
-  SleepDiaryListScreen({required this.onDiaryDeleted, required this.email});
+  const SleepDiaryListScreen({Key? key, required this.onDiaryDeleted, required this.email}) : super(key: key);
 
   @override
   _SleepDiaryListScreenState createState() => _SleepDiaryListScreenState();
 }
 
 class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
-  Map<String, List<Map<String, dynamic>>> _sleepDiariesByMonth = {};
+  Map<String, List<Map<String, dynamic>>> _sleepDiariesByMonth = const {};
 
   @override
   void initState() {
@@ -47,15 +47,17 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
       for (var key in sortedKeys) key: diariesByMonth[key]!
     };
 
-    setState(() {
-      _sleepDiariesByMonth = sortedDiariesByMonth;
-    });
+    if (mounted) {
+      setState(() {
+        _sleepDiariesByMonth = sortedDiariesByMonth;
+      });
+    }
   }
 
   Future<void> _deleteDiary(DateTime date) async {
     await DataService.deleteSleepDiary(date, widget.email);
     _loadSleepDiaries();
-    widget.onDiaryDeleted(); // Notify the calendar to update
+    widget.onDiaryDeleted();
   }
 
   Future<void> _deleteAllDiaries() async {
@@ -63,7 +65,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
       await _deleteDiariesByMonth(month);
     }
     _loadSleepDiaries();
-    widget.onDiaryDeleted(); // Notify the calendar to update
+    widget.onDiaryDeleted();
   }
 
   Future<void> _deleteDiariesByMonth(String month) async {
@@ -73,7 +75,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
         DateTime date = DateTime.parse(diary['date']);
         await _deleteDiary(date);
       }
-      _loadSleepDiaries(); // Reload the list after deletion
+      _loadSleepDiaries();
     }
   }
 
@@ -108,7 +110,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
           ),
           title: Text(
             DateFormat('< yyyy-MM-dd >').format(selectedDate),
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
             child: existingDiary != null
@@ -117,7 +119,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ..._buildSurveyStyleEntries(existingDiary['diary']),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -126,13 +128,13 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
                         Navigator.pop(context);
                         _navigateToSleepDiaryScreen(selectedDate, widget.email, existingDiary['diary']);
                       },
-                      child: Text('수정', style: TextStyle(color: Colors.black)),
+                      child: const Text('수정', style: TextStyle(color: Colors.black)),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         _showDeleteConfirmationDialog(selectedDate);
                       },
-                      child: Text('삭제', style: TextStyle(color: Colors.white)),
+                      child: const Text('삭제', style: TextStyle(color: Colors.white)),
                       style: TextButton.styleFrom(
                         backgroundColor: Colors.red,
                       ),
@@ -141,14 +143,14 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
                 ),
               ],
             )
-                : Text('작성된 수면 일기가 없습니다.'),
+                : const Text('작성된 수면 일기가 없습니다.'),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('닫기', style: TextStyle(color: Colors.black)),
+              child: const Text('닫기', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -167,11 +169,11 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
           children: [
             Text(
               parts[0] + (parts.length > 1 ? ':' : ''),
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16),
+              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16),
             ),
             if (parts.length > 1)
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
                   color: Colors.blue[50],
@@ -179,7 +181,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
                 ),
                 child: Text(
                   parts.sublist(1).join(':'),
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
           ],
@@ -193,23 +195,23 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('삭제 확인', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          content: Text('정말 삭제 하시겠습니까?', style: TextStyle(color: Colors.black)),
+          title: const Text('삭제 확인', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          content: const Text('정말 삭제 하시겠습니까?', style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('취소', style: TextStyle(color: Colors.black)),
+              child: const Text('취소', style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
               onPressed: () async {
                 await _deleteDiary(date);
-                Navigator.pop(context); // Close confirmation dialog
-                Navigator.pop(context); // Close sleep diary dialog
-                _showDeletionSuccessDialog(); // Show deletion success dialog
+                Navigator.pop(context);
+                Navigator.pop(context);
+                _showDeletionSuccessDialog();
               },
-              child: Text('삭제', style: TextStyle(color: Colors.white)),
+              child: const Text('삭제', style: TextStyle(color: Colors.white)),
               style: TextButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
@@ -228,25 +230,25 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          title: Text(
+          title: const Text(
             '모두 삭제 확인',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: Text('정말 모든 수면 일기를 삭제하시겠습니까?'),
+          content: const Text('정말 모든 수면 일기를 삭제하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('취소', style: TextStyle(color: Colors.black)),
+              child: const Text('취소', style: TextStyle(color: Colors.black)),
             ),
             ElevatedButton(
               onPressed: () async {
                 await _deleteAllDiaries();
-                Navigator.pop(context); // Close confirmation dialog
-                _showDeletionSuccessDialog(); // Show deletion success dialog
+                Navigator.pop(context);
+                _showDeletionSuccessDialog();
               },
-              child: Text('삭제', style: TextStyle(color: Colors.white)),
+              child: const Text('삭제', style: TextStyle(color: Colors.white)),
               style: TextButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
@@ -262,14 +264,14 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('삭제 완료', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          content: Text('수면 일기가 삭제되었습니다.', style: TextStyle(color: Colors.black)),
+          title: const Text('삭제 완료', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          content: const Text('수면 일기가 삭제되었습니다.', style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('닫기', style: TextStyle(color: Colors.black)),
+              child: const Text('닫기', style: TextStyle(color: Colors.black)),
             ),
           ],
         );
@@ -281,14 +283,14 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           '수면 일기 목록',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
         ),
         centerTitle: true, // 중앙 정렬
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_forever),
+            icon: const Icon(Icons.delete_forever),
             onPressed: () {
               _showDeleteAllConfirmationDialog();
             },
@@ -298,7 +300,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _sleepDiariesByMonth.isEmpty
-            ? Center(
+            ? const Center(
           child: Text(
             'No sleep diaries found.',
             style: TextStyle(fontSize: 20),
@@ -309,7 +311,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
             return ExpansionTile(
               title: Text(
                 entry.key,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               children: entry.value.map((diary) {
                 final date = DateTime.parse(diary['date']);
@@ -323,7 +325,7 @@ class _SleepDiaryListScreenState extends State<SleepDiaryListScreen> {
                     contentPadding: const EdgeInsets.all(16.0),
                     title: Text(
                       _formatDate(diary['date']),
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -7,7 +7,7 @@ import 'bottom_navigation_bar.dart';
 class DataAnalysisScreen extends StatefulWidget {
   final String email;
 
-  DataAnalysisScreen({required this.email});
+  const DataAnalysisScreen({Key? key, required this.email}) : super(key: key);
 
   @override
   _DataAnalysisScreenState createState() => _DataAnalysisScreenState();
@@ -16,7 +16,7 @@ class DataAnalysisScreen extends StatefulWidget {
 class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   List<_SleepData> _sleepData = [];
   List<_SleepData> _filteredSleepData = [];
-  int _currentIndex = 1;
+  final int _currentIndex = 1;
   DateTime? _selectedMonth;
   ZoomPanBehavior? _zoomPanBehavior;
   bool _isLoading = true;
@@ -24,11 +24,11 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedMonth = DateTime.now(); // Initialize with the current month
+    _selectedMonth = DateTime.now();
     _zoomPanBehavior = ZoomPanBehavior(
       enablePinching: true,
       enablePanning: true,
-      zoomMode: ZoomMode.xy, // Enable zooming for both x and y axes
+      zoomMode: ZoomMode.xy,
     );
     _loadSleepData();
   }
@@ -49,7 +49,6 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
         return _SleepData(date, timeToSleep, timeOutOfBed, timeToBed, timeToLastAwake);
       }).toList();
 
-      // Sort the data by date
       _sleepData.sort((a, b) => a.date.compareTo(b.date));
 
       _filterDataByMonth(_selectedMonth);
@@ -73,13 +72,28 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   }
 
   double _adjustedTime(TimeOfDay time) {
+    double adjusted = _convertToDouble(time);
     if (time.period == 'pm') {
-      return _convertToDouble(time) + 12;
+      adjusted += 12;
     } else if (time.period == 'am' && time.hour == 12) {
-      return 24; // 12am case
-    } else {
-      return _convertToDouble(time) + 24;
+      adjusted += 12; // 12시 am -> 0시=24시
+    } else { //
+      adjusted += 24; // 새벽( 2시 -> 26시)
     }
+    return adjusted;
+  }
+
+
+  double _adjustedTimeForWake(TimeOfDay time) {
+    double adjusted = _convertToDouble(time);
+    if (time.period == 'am') {
+      adjusted += 24;
+    } else if (time.period == 'pm' && time.hour == 12) {
+      adjusted += 24; // 12시 pm -> 12+24 -> 36
+    } else {
+      adjusted += 36; // 12pm 이후 기상
+    }
+    return adjusted;
   }
 
   void _filterDataByMonth(DateTime? month) {
@@ -123,36 +137,36 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           '수면 데이터 분석',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
         ),
         centerTitle: true, // 중앙 정렬
         actions: [
           IconButton(
-            icon: Icon(Icons.calendar_today),
+            icon: const Icon(Icons.calendar_today),
             onPressed: () => _selectMonth(context),
           ),
         ],
       ),
       body: Column(
         children: [
-          SizedBox(height: 16), // Add some spacing at the top
+          const SizedBox(height: 16),
           if (_selectedMonth != null)
             Text(
               DateFormat('yyyy. MM').format(_selectedMonth!),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          SizedBox(height: 16), // Add some spacing between the text and the chart
+          const SizedBox(height: 16),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _filteredSleepData.isNotEmpty
                 ? SfCartesianChart(
               primaryXAxis: DateTimeAxis(
                 dateFormat: DateFormat('yyyy. MM. dd'),
                 intervalType: DateTimeIntervalType.days,
-                majorGridLines: MajorGridLines(width: 0),
+                majorGridLines: const MajorGridLines(width: 0),
                 interval: 1,
                 isVisible: false, // Hide the x-axis
               ),
@@ -161,18 +175,18 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
                 interval: 1,
                 minimum: 0,
                 maximum: 48,
-                majorGridLines: MajorGridLines(width: 0),
+                majorGridLines: const MajorGridLines(width: 0),
                 axisLabelFormatter: (AxisLabelRenderDetails details) {
                   double value = details.value.toDouble();
                   if (value < 24) {
                     return ChartAxisLabel(
                       _formatLabel(value),
-                      TextStyle(color: Colors.black),
+                      const TextStyle(color: Colors.black),
                     );
                   } else {
                     return ChartAxisLabel(
                       _formatLabel(value - 24),
-                      TextStyle(color: Colors.black),
+                      const TextStyle(color: Colors.black),
                     );
                   }
                 },
@@ -195,35 +209,35 @@ class _DataAnalysisScreenState extends State<DataAnalysisScreen> {
                   dataSource: _filteredSleepData,
                   xValueMapper: (_SleepData data, _) => data.date,
                   lowValueMapper: (_SleepData data, _) => _adjustedTime(data.timeToSleep),
-                  highValueMapper: (_SleepData data, _) => _adjustedTime(data.timeOutOfBed),
+                  highValueMapper: (_SleepData data, _) => _adjustedTimeForWake(data.timeOutOfBed),
                   name: '수면 시작 ~ 최종 기상',
                   color: Colors.red.withOpacity(0.5), // Color for better visualization
-                  markerSettings: MarkerSettings(isVisible: true),
-                  dataLabelSettings: DataLabelSettings(isVisible: false),
+                  markerSettings: const MarkerSettings(isVisible: true),
+                  dataLabelSettings: const DataLabelSettings(isVisible: false),
                 ),
                 RangeAreaSeries<_SleepData, DateTime>(
                   dataSource: _filteredSleepData,
                   xValueMapper: (_SleepData data, _) => data.date,
                   lowValueMapper: (_SleepData data, _) => _adjustedTime(data.timeToBed),
-                  highValueMapper: (_SleepData data, _) => _adjustedTime(data.timeToLastAwake),
+                  highValueMapper: (_SleepData data, _) => _adjustedTimeForWake(data.timeToLastAwake),
                   name: '수면 시도 ~ 마지막 깨어남',
                   color: Colors.blue.withOpacity(0.5), // Color for better visualization
-                  markerSettings: MarkerSettings(isVisible: true),
-                  dataLabelSettings: DataLabelSettings(isVisible: false),
+                  markerSettings: const MarkerSettings(isVisible: true),
+                  dataLabelSettings: const DataLabelSettings(isVisible: false),
                 ),
               ],
               legend: Legend(
                 isVisible: true,
-                textStyle: TextStyle(fontWeight: FontWeight.bold), // 볼드체 설정
+                textStyle: const TextStyle(fontWeight: FontWeight.bold), // 볼드체 설정
               ),
               tooltipBehavior: TooltipBehavior(
                 enable: true,
-                format: 'point.x', // Tooltip displays only date and label
+                format: 'point.x',
                 header: '',
               ),
               zoomPanBehavior: _zoomPanBehavior,
             )
-                : Center(child: Text('해당 월에 두 개 이상의 일기를 작성하세요.')),
+                : const Center(child: Text('해당 월에 두 개 이상의 일기를 작성하세요.')),
           ),
         ],
       ),
@@ -242,7 +256,7 @@ class _SleepData {
   final TimeOfDay timeToBed;
   final TimeOfDay timeToLastAwake;
 
-  _SleepData(this.date, this.timeToSleep, this.timeOutOfBed, this.timeToBed, this.timeToLastAwake);
+  const _SleepData(this.date, this.timeToSleep, this.timeOutOfBed, this.timeToBed, this.timeToLastAwake);
 }
 
 class TimeOfDay {
@@ -250,5 +264,5 @@ class TimeOfDay {
   final int minute;
   final String period;
 
-  TimeOfDay({required this.hour, required this.minute, required this.period});
+  const TimeOfDay({required this.hour, required this.minute, required this.period});
 }

@@ -3,19 +3,20 @@ import 'chronotype_survey_result_screen.dart';
 import 'services/data_service.dart';
 
 class ChronotypeSurveyQuestionsScreen extends StatefulWidget {
-  final String email;
+  final String email; // 사용자 이메일
 
-  ChronotypeSurveyQuestionsScreen({required this.email});
+  const ChronotypeSurveyQuestionsScreen({Key? key, required this.email}) : super(key: key);
 
   @override
-  _ChronotypeSurveyQuestionsScreenState createState() => _ChronotypeSurveyQuestionsScreenState();
+  ChronotypeSurveyQuestionsScreenState createState() => ChronotypeSurveyQuestionsScreenState();
 }
 
-class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuestionsScreen> {
-  PageController _pageController = PageController();
-  int _currentQuestionIndex = 0;
-  int _totalScore = 0;
+class ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuestionsScreen> {
+  final PageController _pageController = PageController();
+  int _currentQuestionIndex = 0; // 현재 질문 인덱스
+  int _totalScore = 0; // 총 점수
 
+  // 설문 질문 목록
   final List<Map<String, dynamic>> _questions = [
     {
       'question': '하루 일정을 마음대로 잡을 수 있다면 대략 몇 시 정도에 일어나시겠습니까?',
@@ -195,29 +196,32 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
     },
   ];
 
+  // 다음 질문으로 이동하는 함수
   void _nextQuestion(int score) {
     setState(() {
-      _totalScore += score;
+      _totalScore += score; // 점수 누적
       if (_currentQuestionIndex < _questions.length - 1) {
-        _currentQuestionIndex++;
-        _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+        _currentQuestionIndex++; // 다음 질문 인덱스로 이동
+        _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn); // 다음 페이지로 애니메이션 이동
       } else {
-        _showResult();
+        _showResult(); // 마지막 질문이라면 결과 표시
       }
     });
   }
 
+  // 이전 질문으로 이동하는 함수
   void _previousQuestion() {
     if (_currentQuestionIndex > 0) {
       setState(() {
-        _currentQuestionIndex--;
-        _pageController.previousPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+        _currentQuestionIndex--; // 이전 질문 인덱스로 이동
+        _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn); // 이전 페이지로 애니메이션 이동
       });
     } else {
-      Navigator.pop(context);
+      Navigator.pop(context); // 첫 번째 질문이면 이전 화면으로 돌아감
     }
   }
 
+  // 결과 화면으로 이동하는 함수
   void _showResult() async {
     String resultType;
     if (_totalScore >= 16 && _totalScore <= 30) {
@@ -257,18 +261,18 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('크로노타입 설문',
+        title: const Text('크로노타입 설문',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black), // 볼드체로 설정, 텍스트 색상 검정색
         ),
         centerTitle: true, // 중앙 정렬
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: _previousQuestion,
+          icon: const Icon(Icons.arrow_back),
+          onPressed: _previousQuestion, // 이전 질문으로 이동
         ),
       ),
       body: PageView.builder(
         controller: _pageController,
-        physics: NeverScrollableScrollPhysics(), // 사용자가 직접 스크롤하지 못하게 설정
+        physics: const NeverScrollableScrollPhysics(), // 사용자가 직접 스크롤하지 못하게 설정
         itemCount: _questions.length,
         itemBuilder: (context, index) {
           final question = _questions[index];
@@ -279,34 +283,34 @@ class _ChronotypeSurveyQuestionsScreenState extends State<ChronotypeSurveyQuesti
               children: [
                 Center(
                   child: Text(
-                    '${index + 1} / ${_questions.length}',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    '${index + 1} / ${_questions.length}', // 현재 질문 번호와 총 질문 수
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  question['question'],
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  question['question'], // 질문 텍스트
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Column(
                   children: question['options'].map<Widget>((option) {
                     return Container(
-                      margin: EdgeInsets.symmetric(vertical: 4.0),
+                      margin: const EdgeInsets.symmetric(vertical: 4.0),
                       child: ElevatedButton(
-                        onPressed: () => _nextQuestion(option['score']),
+                        onPressed: () => _nextQuestion(option['score']), // 선택 시 점수를 추가하고 다음 질문으로 이동
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue[100],
                           foregroundColor: Colors.black,
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
+                            borderRadius: BorderRadius.circular(30.0), // 버튼 모서리 둥글게
                           ),
                         ),
                         child: Row(
                           children: [
-                            Expanded(child: Text(option['text'], textAlign: TextAlign.left)),
-                            Icon(Icons.arrow_forward, size: 20),
+                            Expanded(child: Text(option['text'], textAlign: TextAlign.left)), // 옵션 텍스트
+                            const Icon(Icons.arrow_forward, size: 20), // 화살표 아이콘
                           ],
                         ),
                       ),
